@@ -78,8 +78,12 @@
                 reply = "Namaste! Main Flaxxi AI hoon. Main aapki kya madad kar sakta hoon?";
             } else if (text.includes("name") || text.includes("naam")) {
                 reply = "Mera naam Flaxxi AI hai, aur mujhe Tenzino ne banaya hai!";
+            } else if (text.includes("movie") || text.includes("film") || text.includes("watch online")) {
+                reply = "Movie watch website banane ke liye aapko HTML, CSS aur JavaScript se UI banana hoga, aur movies embed karne ke liye video player ya API use kar sakte hain. Kya aapko code chahiye?";
+            } else if (text.includes("web") || text.includes("website") || text.includes("bana")) {
+                reply = "Website banane ke liye HTML/CSS frontend aur JavaScript logic ki zaroorat hoti hai. Aap Tenzino ke sath milkar aur features add kar sakte hain!";
             } else {
-                reply = `Flaxxi AI Response: Aapka sawal tha: "${input}". Main instant mode mein active hoon!`;
+                reply = `Aapka sawal: "${input}"\n\nFlaxxi AI Answer: Main aapki madad karne ke liye ready hoon! Kripya batayein aapko is topic par kya specific information chahiye?`;
             }
 
             outputBox.innerText = reply;
