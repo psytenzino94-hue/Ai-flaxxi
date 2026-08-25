@@ -30,7 +30,7 @@
             </div>
         </div>
 
-        <!-- Chat Input -->
+        <!-- Input Area -->
         <div class="space-y-4">
             <div>
                 <label class="block text-sm font-medium text-slate-400 mb-1">Apna Sawal Likhie</label>
@@ -58,7 +58,7 @@
                     <i class="fa-solid fa-volume-high"></i> Read aloud
                 </button>
             </div>
-            <pre id="outputBox" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-4 min-h-[120px] max-h-[300px] overflow-y-auto text-slate-200 text-sm font-mono whitespace-pre-wrap">Waiting for input...</pre>
+            <pre id="outputBox" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-4 min-h-[120px] max-h-[320px] overflow-y-auto text-slate-200 text-sm font-mono whitespace-pre-wrap">Waiting for input...</pre>
         </div>
     </div>
 
@@ -75,18 +75,22 @@
             let reply = "";
             const text = input.toLowerCase();
 
-            if (text.includes("kisne banaya") || text.includes("who made you") || text.includes("tumhe kisne banaya")) {
+            if (text.includes("kisne banaya") || text.includes("who made you")) {
                 reply = "Mujhe Tenzino ne banaya hai!";
             } 
-            else if (text.includes("youtube") || text.includes("movie") || text.includes("code")) {
-                reply = `Yeh raha YouTube / Movie App ka full HTML Code (Created by Tenzino):\n\n` +
-`<!DOCTYPE html>\n<html>\n<head>\n  <title>My Movie App</title>\n  <style>\n    body { background: #111; color: white; font-family: sans-serif; text-align: center; }\n    .video-card { background: #222; padding: 15px; margin: 10px; border-radius: 10px; }\n  </style>\n</head>\n<body>\n  <h1>My Video Platform</h1>\n  <div class="video-card">\n    <h3>Sample Video</h3>\n    <iframe width="100%" height="200" src="https://www.youtube.com/embed/tgbNymZ7vqY"></iframe>\n  </div>\n</body>\n</html>`;
-            } 
+            else if (text.includes("carrom") || text.includes("game")) {
+                reply = `Carrom / 2D Aim Line Guide Script (HTML Canvas):\n\n` +
+`<!DOCTYPE html>\n<html>\n<head>\n  <style>\n    canvas { background: #15803d; border: 4px solid #78350f; border-radius: 50%; }\n  </style>\n</head>\n<body style="display:flex; justify-content:center;">\n  <canvas id="carrom" width="300" height="300"></canvas>\n  <script>\n    const ctx = document.getElementById('carrom').getContext('2d');\n    // Striker & Aim guide line\n    ctx.beginPath(); ctx.arc(150, 240, 15, 0, Math.PI*2); ctx.fillStyle='white'; ctx.fill();\n    ctx.beginPath(); ctx.moveTo(150, 240); ctx.lineTo(150, 60); ctx.strokeStyle='yellow'; ctx.lineWidth=2; ctx.stroke();\n  <\/script>\n</body>\n</html>`;
+            }
+            else if (text.includes("youtube") || text.includes("movie")) {
+                reply = `YouTube / Video Player Script:\n\n` +
+`<!DOCTYPE html>\n<html>\n<body style="background:#0f172a; color:white; font-family:sans-serif; text-align:center;">\n  <h2>Flaxxi Video App</h2>\n  <iframe width="100%" height="220" src="https://www.youtube.com/embed/tgbNymZ7vqY"></iframe>\n</body>\n</html>`;
+            }
             else if (text.includes("hello") || text.includes("hi")) {
                 reply = "Namaste! Main Flaxxi AI hoon. Main aapki kya madad kar sakta hoon?";
             } 
             else {
-                reply = `Flaxxi AI Response:\nAapka sawal: "${input}"\n\nTenzino ke dwara banaya gaya yeh Flaxxi AI system ab aapko direct source codes aur answers serve karega!`;
+                reply = `Flaxxi AI Engine Result:\n\nTopic: ${input}\nStatus: Direct Solution Generated!\n\nKaam shuru karne ke liye niche diya HTML setup use karein:\n\n<!DOCTYPE html>\n<html>\n<head><title>${input}</title></head>\n<body style="background:#0b0f19; color:#fff; font-family:sans-serif; padding:20px;">\n  <h1>Flaxxi AI: ${input}</h1>\n  <p>Tenzino ke dwara banaya gaya full template system ready hai.</p>\n</body>\n</html>`;
             }
 
             outputBox.innerText = reply;
