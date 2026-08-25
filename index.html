@@ -78,14 +78,14 @@
                 <div class="flex items-center gap-2">
                     <!-- Language Selector -->
                     <select id="langSelect" onchange="loadVoices()" class="bg-slate-950 text-slate-300 text-xs border border-slate-800 rounded-lg px-2 py-1.5 focus:outline-none">
+                        <option value="ne-NP">Nepali</option>
                         <option value="hi-IN">Hindi (India)</option>
                         <option value="en-US">English (US)</option>
-                        <option value="ne-NP">Nepali</option>
                         <option value="es-ES">Spanish</option>
                     </select>
 
                     <!-- Multiple Voice Select Dropdown -->
-                    <select id="voiceSelect" class="bg-slate-950 text-slate-300 text-xs border border-slate-800 rounded-lg px-2 py-1.5 focus:outline-none max-w-[130px] truncate">
+                    <select id="voiceSelect" class="bg-slate-950 text-slate-300 text-xs border border-slate-800 rounded-lg px-2 py-1.5 focus:outline-none max-w-[120px] truncate">
                         <option value="">Default Voice</option>
                     </select>
 
@@ -117,7 +117,7 @@
             const selectedLang = document.getElementById('langSelect').value;
             voiceSelect.innerHTML = '<option value="">Default Voice</option>';
 
-            const filteredVoices = availableVoices.filter(v => v.lang.startsWith(selectedLang.substring(0,2)));
+            const filteredVoices = availableVoices.filter(v => v.lang.toLowerCase().includes(selectedLang.substring(0,2).toLowerCase()));
             const voiceList = filteredVoices.length > 0 ? filteredVoices : availableVoices;
 
             voiceList.forEach((voice) => {
@@ -158,9 +158,14 @@
             stopAudio();
             const input = document.getElementById('userInput').value.trim();
             const outputBox = document.getElementById('outputBox');
+            const currentLang = document.getElementById('langSelect').value;
 
             if (!input && !uploadedImageBase64) {
-                outputBox.value = "Kripya koi message likhein ya photo add karein.";
+                if(currentLang.startsWith('ne')) {
+                    outputBox.value = "कृपया कुनै सन्देश लेख्नुहोस् वा तस्विर थप्नुहोस्।";
+                } else {
+                    outputBox.value = "Kripya koi message likhein ya photo add karein.";
+                }
                 return;
             }
 
@@ -171,7 +176,6 @@
             const wantsAppOrCode = query.includes("aaisa app") || query.includes("app bana") || query.includes("code") || query.includes("carrom") || query.includes("aim") || query.includes("hack") || query.includes("guide");
 
             if (hasImage || wantsAppOrCode) {
-                // Generates Exact Carrom Aim Guide App Code when Photo + Query is provided
                 responseText = 
 `<!-- FLAXXI AI: CARROM AIM PRO FULL APP CODE -->
 <!DOCTYPE html>
@@ -206,9 +210,17 @@
 </body>
 </html>`;
             } else if (query.includes("hlo") || query.includes("hello") || query.includes("hi")) {
-                responseText = "Hello! Main Flaxxi AI hoon. Main aapki kya madad kar sakta hoon?";
+                if (currentLang.startsWith('ne')) {
+                    responseText = "नमस्ते! म फ्ल्याक्सी एआई हुँ। आज म तपाईलाई कसरी सहयोग गर्न सक्छु?";
+                } else {
+                    responseText = "Hello! Main Flaxxi AI hoon. Main aapki kya madad kar sakta hoon?";
+                }
             } else {
-                responseText = `Flaxxi AI Response:\nAapka question: "${input}". Main is baare mein aapki help kar sakta hoon.`;
+                if (currentLang.startsWith('ne')) {
+                    responseText = `फ्ल्याक्सी एआई प्रतिक्रिया:\nतपाईको प्रश्न: "${input}"। म यस विषयमा तपाईलाई सहयोग गर्न सक्छु।`;
+                } else {
+                    responseText = `Flaxxi AI Response:\nAapka question: "${input}". Main is baare mein aapki help kar sakta hoon.`;
+                }
             }
 
             outputBox.value = responseText;
