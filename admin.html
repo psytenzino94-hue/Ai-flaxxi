@@ -3,145 +3,91 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Dashboard - Flaxxi AI</title>
+    <title>Flaxxi AI - Admin Panel</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
         body { background-color: #0b0f19; color: #f8fafc; font-family: 'Segoe UI', sans-serif; }
+        .gold-border { border-color: #d97706; }
         .gold-text { color: #f59e0b; }
-        .gold-bg { background-color: #d97706; }
+        .gold-btn { background: linear-gradient(135deg, #d97706, #b45309); }
+        .gold-btn:hover { background: linear-gradient(135deg, #b45309, #92400e); }
     </style>
 </head>
-<body class="min-h-screen p-4 md:p-8">
+<body class="min-h-screen flex flex-col items-center justify-center p-4">
 
-    <!-- Admin Overlay (Password Check) -->
-    <div id="loginOverlay" class="fixed inset-0 bg-slate-950/90 flex items-center justify-center p-4 z-50">
-        <div class="bg-slate-900 border border-amber-500/30 p-6 rounded-2xl w-full max-w-md space-y-4">
-            <h2 class="text-xl font-bold gold-text flex items-center gap-2"><i class="fa-solid fa-lock"></i> Admin Access</h2>
-            <input type="password" id="adminPassInput" class="w-full bg-slate-800 border border-slate-700 p-3 rounded-xl text-white outline-none focus:border-amber-500" placeholder="Enter Admin Password">
-            <button onclick="checkAdminPass()" class="w-full gold-bg hover:bg-amber-600 text-white font-bold py-3 rounded-xl transition">Unlock Dashboard</button>
+    <!-- Login Box -->
+    <div id="loginBox" class="w-full max-w-md bg-slate-900 rounded-2xl shadow-2xl border gold-border p-6 space-y-6">
+        <div class="text-center space-y-2">
+            <h1 class="text-2xl font-bold gold-text flex items-center justify-center gap-2">
+                <i class="fa-solid fa-user-shield"></i> Admin Panel Login
+            </h1>
+            <p class="text-xs text-slate-400">Password enter karein (Password: Tenzino766)</p>
+        </div>
+
+        <div class="space-y-4">
+            <div>
+                <label class="block text-sm font-medium text-slate-400 mb-1">Admin Password</label>
+                <input type="password" id="adminPassword" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-white focus:outline-none focus:border-amber-500 transition" placeholder="Enter password...">
+            </div>
+
+            <button onclick="checkLogin()" class="w-full gold-btn text-white font-semibold py-3 rounded-xl shadow-lg transition flex items-center justify-center gap-2">
+                <i class="fa-solid fa-lock-open"></i> Login to Admin
+            </button>
+            
+            <div class="text-center">
+                <a href="index.html" class="text-xs text-slate-400 hover:text-amber-400"><i class="fa-solid fa-arrow-left"></i> Back to Home</a>
+            </div>
         </div>
     </div>
 
-    <!-- Main Dashboard -->
-    <div class="max-w-5xl mx-auto space-y-6">
-        <!-- Header -->
+    <!-- Admin Dashboard (Hidden by default) -->
+    <div id="dashboardBox" class="hidden w-full max-w-2xl bg-slate-900 rounded-2xl shadow-2xl border gold-border p-6 space-y-6">
         <div class="flex items-center justify-between border-b border-slate-800 pb-4">
-            <div class="flex items-center gap-2">
-                <i class="fa-solid fa-shield-halved gold-text text-2xl"></i>
-                <h1 class="text-xl font-bold gold-text">VIP ADMIN</h1>
+            <h1 class="text-xl font-bold gold-text flex items-center gap-2">
+                <i class="fa-solid fa-gauge-high"></i> Admin Dashboard
+            </h1>
+            <button onclick="logoutAdmin()" class="text-xs bg-red-500/10 text-red-400 px-3 py-1.5 rounded-lg border border-red-500/20">
+                <i class="fa-solid fa-right-from-bracket"></i> Logout
+            </button>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 space-y-2">
+                <div class="text-sm text-slate-400">Total Users / Visitors</div>
+                <div class="text-2xl font-bold text-amber-400">1,245</div>
             </div>
-            <div class="flex items-center gap-2">
-                <!-- User App Button -->
-                <a href="index.html" class="bg-indigo-600 hover:bg-indigo-500 text-white text-xs px-3 py-2 rounded-lg flex items-center gap-1 font-semibold transition">
-                    <i class="fa-solid fa-robot"></i> User AI App
-                </a>
-                <!-- Settings Gear Icon -->
-                <button onclick="openSettings()" class="bg-slate-800 hover:bg-slate-700 border border-slate-700 text-amber-400 p-2 rounded-lg transition" title="Dashboard Settings">
-                    <i class="fa-solid fa-gear"></i>
-                </button>
-                <button onclick="lockAdmin()" class="bg-red-600/20 text-red-400 border border-red-500/30 px-3 py-1.5 rounded-lg text-xs font-bold transition">Lock</button>
+            <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 space-y-2">
+                <div class="text-sm text-slate-400">System Status</div>
+                <div class="text-2xl font-bold text-emerald-400">Active & Online</div>
             </div>
         </div>
 
-        <!-- Subheader & Table -->
-        <div class="flex items-center justify-between">
-            <h2 class="text-2xl font-bold">Categories Management</h2>
-            <button onclick="addCategory()" class="gold-bg hover:bg-amber-600 text-white font-semibold px-4 py-2 rounded-xl text-sm transition">+ Add New</button>
-        </div>
-
-        <!-- Category Table -->
-        <div class="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden">
-            <table class="w-full text-left text-sm">
-                <thead class="bg-slate-800/50 gold-text uppercase text-xs">
-                    <tr>
-                        <th class="p-4">Category Name</th>
-                        <th class="p-4">Status</th>
-                        <th class="p-4">Action</th>
-                    </tr>
-                </thead>
-                <tbody id="categoryList" class="divide-y divide-slate-800 text-slate-300">
-                    <tr>
-                        <td class="p-4 font-semibold">Mathematics</td>
-                        <td class="p-4 text-emerald-400">Active (7 Items)</td>
-                        <td class="p-4"><button onclick="deleteRow(this)" class="text-red-400 hover:text-red-300"><i class="fa-solid fa-trash"></i></button></td>
-                    </tr>
-                    <tr>
-                        <td class="p-4 font-semibold">Ethical Hacking</td>
-                        <td class="p-4 text-emerald-400">Active (1 Item)</td>
-                        <td class="p-4"><button onclick="deleteRow(this)" class="text-red-400 hover:text-red-300"><i class="fa-solid fa-trash"></i></button></td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-    </div>
-
-    <!-- Password Settings Modal -->
-    <div id="settingsModal" class="hidden fixed inset-0 bg-slate-950/80 flex items-center justify-center p-4 z-50">
-        <div class="bg-slate-900 border border-slate-700 p-6 rounded-2xl w-full max-w-sm space-y-4">
-            <div class="flex justify-between items-center">
-                <h3 class="font-bold gold-text flex items-center gap-2"><i class="fa-solid fa-key"></i> Change Password</h3>
-                <button onclick="closeSettings()" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
-            </div>
-            <p class="text-xs text-slate-400">Admin dashboard unlock password yahan change karein.</p>
-            <input type="password" id="newPassInput" class="w-full bg-slate-800 border border-slate-700 p-3 rounded-xl text-white outline-none focus:border-amber-500" placeholder="Enter New Password">
-            <button onclick="saveNewPassword()" class="w-full gold-bg text-white font-bold py-2.5 rounded-xl transition">Save Password</button>
+        <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 space-y-3">
+            <h3 class="text-sm font-semibold text-slate-300"><i class="fa-solid fa-sliders"></i> Quick Controls</h3>
+            <button onclick="alert('System cache cleared successfully!')" class="bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold px-4 py-2 rounded-lg border border-slate-700">
+                Clear System Cache
+            </button>
         </div>
     </div>
 
     <script>
-        // Password Storage logic
-        let currentPassword = localStorage.getItem('adminPass') || 'admin123';
+        const CORRECT_PASSWORD = "Tenzino766";
 
-        function checkAdminPass() {
-            const input = document.getElementById('adminPassInput').value;
-            if (input === currentPassword) {
-                document.getElementById('loginOverlay').classList.add('hidden');
+        function checkLogin() {
+            const pass = document.getElementById('adminPassword').value;
+            if (pass === CORRECT_PASSWORD) {
+                document.getElementById('loginBox').classList.add('hidden');
+                document.getElementById('dashboardBox').classList.remove('hidden');
             } else {
-                alert('Wrong Password!');
+                alert('Galat password! Kripya sahi password (Tenzino766) dalein.');
             }
         }
 
-        function lockAdmin() {
-            document.getElementById('loginOverlay').classList.remove('hidden');
-            document.getElementById('adminPassInput').value = '';
-        }
-
-        // Settings Modal logic
-        function openSettings() {
-            document.getElementById('settingsModal').classList.remove('hidden');
-        }
-
-        function closeSettings() {
-            document.getElementById('settingsModal').classList.add('hidden');
-            document.getElementById('newPassInput').value = '';
-        }
-
-        function saveNewPassword() {
-            const newPass = document.getElementById('newPassInput').value.trim();
-            if (newPass && newPass.length >= 4) {
-                currentPassword = newPass;
-                localStorage.setItem('adminPass', newPass); // Save to local storage
-                alert('Admin Password updated successfully!');
-                closeSettings();
-            } else {
-                alert('Password must be at least 4 characters long.');
-            }
-        }
-
-        // Dummy CRUD functions
-        function addCategory() {
-            const name = prompt("Enter category name:");
-            if (name) {
-                const tbody = document.getElementById('categoryList');
-                const tr = document.createElement('tr');
-                tr.innerHTML = `<td class="p-4 font-semibold">${name}</td><td class="p-4 text-emerald-400">Active (0 Items)</td><td class="p-4"><button onclick="deleteRow(this)" class="text-red-400"><i class="fa-solid fa-trash"></i></button></td>`;
-                tbody.appendChild(tr);
-            }
-        }
-
-        function deleteRow(btn) {
-            btn.closest('tr').remove();
+        function logoutAdmin() {
+            document.getElementById('adminPassword').value = '';
+            document.getElementById('dashboardBox').classList.add('hidden');
+            document.getElementById('loginBox').classList.remove('hidden');
         }
     </script>
 </body>
