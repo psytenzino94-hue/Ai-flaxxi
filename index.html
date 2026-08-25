@@ -17,15 +17,20 @@
 <body class="min-h-screen flex flex-col items-center justify-center p-4">
 
     <div class="w-full max-w-lg bg-slate-800 rounded-2xl shadow-2xl border gold-border p-6 space-y-6">
-        <!-- Header -->
+        <!-- Header with Admin Button -->
         <div class="flex items-center justify-between border-b border-slate-700 pb-4">
             <h1 class="text-2xl font-bold gold-text flex items-center gap-2">
                 <i class="fa-solid fa-bolt"></i> Flaxxi AI
             </h1>
-            <span class="text-xs bg-emerald-500/10 text-emerald-400 px-2.5 py-1 rounded-full border border-emerald-500/20">Online</span>
+            <div class="flex items-center gap-2">
+                <a href="admin.html" class="text-slate-400 hover:text-amber-400 p-2 rounded-lg bg-slate-700/50 border border-slate-600" title="Open Admin Panel">
+                    <i class="fa-solid fa-user-shield"></i>
+                </a>
+                <span class="text-xs bg-emerald-500/10 text-emerald-400 px-2.5 py-1 rounded-full border border-emerald-500/20">Online</span>
+            </div>
         </div>
 
-        <!-- Chat Area -->
+        <!-- Chat Input Area -->
         <div class="space-y-4">
             <div>
                 <label class="block text-sm font-medium text-slate-400 mb-1">Apna Sawal Likhie</label>
@@ -45,7 +50,7 @@
             </div>
         </div>
 
-        <!-- Output Area -->
+        <!-- Output Area with Speech -->
         <div class="space-y-2">
             <div class="flex items-center justify-between">
                 <label class="block text-sm font-medium text-slate-400">Response</label>
@@ -74,16 +79,14 @@
 
             if (text.includes("kisne banaya") || text.includes("who made you") || text.includes("who created you") || text.includes("tumhe kisne banaya")) {
                 reply = "Mujhe Tenzino ne banaya hai!";
+            } else if (text.includes("youtube") || text.includes("movie")) {
+                reply = "YouTube jaisa application banane ke liye aapko HTML, CSS, aur JavaScript frontend, aur movie storage backend chahiye hoga. Tenzino ismein aapki help kar sakte hain.";
             } else if (text.includes("hello") || text.includes("hi")) {
                 reply = "Namaste! Main Flaxxi AI hoon. Main aapki kya madad kar sakta hoon?";
             } else if (text.includes("name") || text.includes("naam")) {
-                reply = "Mera naam Flaxxi AI hai, aur mujhe Tenzino ne banaya hai!";
-            } else if (text.includes("movie") || text.includes("film") || text.includes("watch online")) {
-                reply = "Movie watch website banane ke liye aapko HTML, CSS aur JavaScript se UI banana hoga, aur movies embed karne ke liye video player ya API use kar sakte hain. Kya aapko code chahiye?";
-            } else if (text.includes("web") || text.includes("website") || text.includes("bana")) {
-                reply = "Website banane ke liye HTML/CSS frontend aur JavaScript logic ki zaroorat hoti hai. Aap Tenzino ke sath milkar aur features add kar sakte hain!";
+                reply = "Mera naam Flaxxi AI hai!";
             } else {
-                reply = `Aapka sawal: "${input}"\n\nFlaxxi AI Answer: Main aapki madad karne ke liye ready hoon! Kripya batayein aapko is topic par kya specific information chahiye?`;
+                reply = `Flaxxi AI Answer: "${input}"\nIs sawal ka advanced jawab mere agle update mein aayega! Abhi main testing phase mein hoon.`;
             }
 
             outputBox.innerText = reply;
