@@ -34,7 +34,7 @@
         <div class="space-y-4">
             <div>
                 <label class="block text-sm font-medium text-slate-400 mb-1">Apna Sawal Likhie</label>
-                <textarea id="userInput" rows="3" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-white focus:outline-none focus:border-amber-500 transition" placeholder="Carrom aim hack project math opencv c++ and python guide..."></textarea>
+                <textarea id="userInput" rows="3" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-white focus:outline-none focus:border-amber-500 transition" placeholder="Apna sawal yahan likhein..."></textarea>
             </div>
 
             <!-- Image Preview Area -->
@@ -45,7 +45,7 @@
             </div>
 
             <div class="flex flex-wrap gap-2 items-center">
-                <button onclick="processAIResponse()" class="flex-1 gold-btn text-white font-semibold py-3 px-4 rounded-xl shadow-lg transition flex items-center justify-center gap-2">
+                <button type="button" onclick="processAIResponse()" class="flex-1 gold-btn text-white font-semibold py-3 px-4 rounded-xl shadow-lg transition flex items-center justify-center gap-2">
                     <i class="fa-solid fa-paper-plane"></i> Ask Flaxxi
                 </button>
 
@@ -54,11 +54,11 @@
                     <input type="file" id="imageInput" accept="image/*" class="hidden" onchange="handleImageUpload(event)">
                 </label>
 
-                <button onclick="startVoiceInput()" class="bg-indigo-600 hover:bg-indigo-500 text-white font-semibold px-4 py-3 rounded-xl transition flex items-center justify-center">
+                <button type="button" onclick="startVoiceInput()" class="bg-indigo-600 hover:bg-indigo-500 text-white font-semibold px-4 py-3 rounded-xl transition flex items-center justify-center">
                     <i class="fa-solid fa-microphone" id="micIcon"></i>
                 </button>
 
-                <button onclick="clearText()" class="bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold px-4 py-3 rounded-xl transition">
+                <button type="button" onclick="clearText()" class="bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold px-4 py-3 rounded-xl transition">
                     Clear
                 </button>
             </div>
@@ -83,11 +83,11 @@
                         <option value="">Default Voice</option>
                     </select>
 
-                    <button id="playBtn" onclick="toggleAudio()" class="text-xs bg-amber-500/10 text-amber-400 px-2.5 py-1.5 rounded-lg border border-amber-500/20 flex items-center gap-1 font-semibold">
+                    <button type="button" id="playBtn" onclick="toggleAudio()" class="text-xs bg-amber-500/10 text-amber-400 px-2.5 py-1.5 rounded-lg border border-amber-500/20 flex items-center gap-1 font-semibold">
                         <i id="playIcon" class="fa-solid fa-play"></i> <span id="playText">Play</span>
                     </button>
 
-                    <button onclick="copyCode()" class="text-xs bg-slate-800 hover:bg-slate-700 text-slate-300 px-2.5 py-1.5 rounded-lg border border-slate-700 flex items-center gap-1">
+                    <button type="button" onclick="copyCode()" class="text-xs bg-slate-800 hover:bg-slate-700 text-slate-300 px-2.5 py-1.5 rounded-lg border border-slate-700 flex items-center gap-1">
                         <i class="fa-solid fa-copy"></i> Copy
                     </button>
                 </div>
@@ -116,7 +116,7 @@
                 const index = availableVoices.indexOf(voice);
                 const option = document.createElement('option');
                 option.value = index;
-                option.innerText = `${voice.name}`;
+                option.innerText = voice.name;
                 voiceSelect.appendChild(option);
             });
         }
@@ -160,60 +160,43 @@
             const query = input.toLowerCase();
             let responseText = "";
 
-            const isAimBot = query.includes("carrom") || query.includes("aim") || query.includes("hack") || query.includes("guide") || query.includes("opencv") || query.includes("python") || query.includes("c++") || query.includes("math");
-
-            if (isAimBot) {
+            if (query.includes("hlo") || query.includes("hello") || query.includes("hi")) {
+                responseText = currentLang.startsWith('ne') ? 
+                    "नमस्ते! म फ्ल्याक्सी एआई हुँ। आज म तपाईलाई कसरी सहयोग गर्न सक्छु?" : 
+                    "Hello! Main Flaxxi AI hoon. Main aapki kya madad kar sakta hoon?";
+            } 
+            else if (query.includes("carrom") || query.includes("aim") || query.includes("hack") || query.includes("guide") || query.includes("opencv") || query.includes("python") || query.includes("c++") || query.includes("math")) {
                 responseText = 
 `=============================================================
  FLAXXI AI: CARROM AIM BOT PROJECT MATH & OPENCV CODE 
 =============================================================
 
-[1. PROJECT MATHEMATICAL FOUNDATION (MATHEMATICS OF AIM BOT)]
-• 2D Vector Geometry: Striker (S), Coin (C), Pocket (P) ko (X, Y) plane mapping me represent karte hain.
-• Contact Point Angle Calculation:
-  theta = atan2(P.y - C.y, P.x - C.x)
-• Aim Target Position Formula (Ghost Ball Center):
+[1. PROJECT MATHEMATICAL FOUNDATION]
+• 2D Vector Geometry: Striker (S), Coin (C), Pocket (P)
+• Contact Point Angle: theta = atan2(P.y - C.y, P.x - C.x)
+• Target Formula:
   Target.x = C.x - cos(theta) * (R_striker + R_coin)
   Target.y = C.y - sin(theta) * (R_striker + R_coin)
-• Wall Bounce Reflection Logic (Ray Optics / Vector Bounce):
-  Normal Vector N (Wall Plane), Incident Vector V (Motion)
-  Reflection Ray = V - 2 * (V . N) * N
 
 -------------------------------------------------------------
-[2. PYTHON OPENCV AIM ENGINE SOURCE CODE]
+[2. PYTHON OPENCV AIM ENGINE CODE]
 -------------------------------------------------------------
 import cv2
 import numpy as np
 
-def calculate_project_math(striker, coin, pocket, radius_coin=18, radius_striker=18):
-    # Vector Mathematics Calculation
+def calculate_project_math(striker, coin, pocket, radius=18):
     theta = np.arctan2(pocket[1] - coin[1], pocket[0] - coin[0])
-    distance = radius_coin + radius_striker
-    aim_x = coin[0] - np.cos(theta) * distance
-    aim_y = coin[1] - np.sin(theta) * distance
+    aim_x = coin[0] - np.cos(theta) * (radius * 2)
+    aim_y = coin[1] - np.sin(theta) * (radius * 2)
     return (int(aim_x), int(aim_y))
 
-def render_aim_overlay():
-    img = np.zeros((600, 600, 3), dtype=np.uint8)
-    striker = np.array([300, 500])
-    coin = np.array([300, 300])
-    pocket = np.array([550, 50])
-
-    aim_target = calculate_project_math(striker, coin, pocket)
-
-    # Render Visual Overlay
-    cv2.circle(img, tuple(striker), 15, (255, 255, 255), -1) 
-    cv2.circle(img, tuple(coin), 18, (0, 0, 255), -1)       
-    cv2.circle(img, tuple(pocket), 25, (0, 255, 0), -1)     
-
-    cv2.line(img, tuple(striker), aim_target, (0, 255, 255), 2)  
-    cv2.line(img, tuple(coin), tuple(pocket), (255, 0, 255), 2) 
-
-    print("[Project Math Engine]: Calculations Complete!")
-    return img
+img = np.zeros((600, 600, 3), dtype=np.uint8)
+aim_target = calculate_project_math((300, 500), (300, 300), (550, 50))
+cv2.line(img, (300, 500), aim_target, (0, 255, 255), 2)
+print("[Python Engine]: Calculation Complete!")
 
 -------------------------------------------------------------
-[3. OPENCV C++ NATIVE ENGINE SOURCE CODE]
+[3. OPENCV C++ ENGINE CODE]
 -------------------------------------------------------------
 #include <opencv2/opencv.hpp>
 #include <iostream>
@@ -221,57 +204,17 @@ def render_aim_overlay():
 
 struct Vector2D { float x, y; };
 
-Vector2D computeProjectMath(Vector2D S, Vector2D C, Vector2D P, float rCoin, float rStriker) {
+Vector2D computeProjectMath(Vector2D S, Vector2D C, Vector2D P, float r) {
     float theta = atan2(P.y - C.y, P.x - C.x);
-    float dist = rCoin + rStriker;
-    return { C.x - cos(theta) * dist, C.y - sin(theta) * dist };
+    return { C.x - cos(theta) * (r * 2), C.y - sin(theta) * (r * 2) };
 }
 
 int main() {
     cv::Mat canvas = cv::Mat::zeros(600, 600, CV_8UC3);
-
-    Vector2D striker = {300, 500};
-    Vector2D coin = {300, 300};
-    Vector2D pocket = {550, 50};
-
-    Vector2D aimTarget = computeProjectMath(striker, coin, pocket, 18.0f, 18.0f);
-
-    cv::line(canvas, cv::Point(striker.x, striker.y), cv::Point(aimTarget.x, aimTarget.y), cv::Scalar(0, 255, 255), 2);
-    cv::line(canvas, cv::Point(coin.x, coin.y), cv::Point(pocket.x, pocket.y), cv::Scalar(255, 0, 255), 2);
-
-    std::cout << "[C++ Engine] Project Math Applied Successfully." << std::endl;
+    Vector2D target = computeProjectMath({300, 500}, {300, 300}, {550, 50}, 18.0f);
+    std::cout << "[C++ Engine] Target X: " << target.x << " Y: " << target.y << std::endl;
     return 0;
-}
-
--------------------------------------------------------------
-[4. HOW TO EXECUTE]
-• Python: python carrom_aim.py
-• C++: g++ aim.cpp -o aim `pkg-config --cflags --libs opencv4` && ./aim`;
-            } 
-            else if (uploadedImageBase64 || query.includes("html") || query.includes("app bana")) {
-                responseText = 
-`=== CARROM AIM APP: HTML/CSS OVERLAY ===
-
-<!DOCTYPE html>
-<html>
-<head>
-    <style>
-        body { background: #0b0f19; color: white; text-align: center; font-family: sans-serif; }
-        .board { width: 280px; height: 280px; background: #15803d; border: 6px solid #78350f; border-radius: 50%; margin: 20px auto; position: relative; }
-        .striker { width: 30px; height: 30px; background: white; border-radius: 50%; position: absolute; bottom: 20px; left: 125px; }
-        .aim-line { position: absolute; bottom: 50px; left: 139px; width: 3px; height: 160px; background: #facc15; }
-    </style>
-</head>
-<body>
-    <h3>Carrom Aim Tool</h3>
-    <div class="board"><div class="aim-line"></div><div class="striker"></div></div>
-</body>
-</html>`;
-            } 
-            else if (query.includes("hlo") || query.includes("hello") || query.includes("hi")) {
-                responseText = currentLang.startsWith('ne') ? 
-                    "नमस्ते! म फ्ल्याक्सी एआई हुँ। आज म तपाईलाई कसरी सहयोग गर्न सक्छु?" : 
-                    "Hello! Main Flaxxi AI hoon. Main aapki kya madad kar sakta hoon?";
+}`;
             } 
             else {
                 responseText = `Flaxxi AI Response:\nAapka question: "${input}". Main is baare mein aapki Help kar sakta hoon.`;
