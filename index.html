@@ -16,8 +16,8 @@
 </head>
 <body class="min-h-screen flex flex-col items-center justify-center p-4">
 
-    <div class="w-full max-w-lg bg-slate-800 rounded-2xl shadow-2xl border gold-border p-6 space-y-6">
-        <!-- Header with Admin Button -->
+    <div class="w-full max-w-xl bg-slate-800 rounded-2xl shadow-2xl border gold-border p-6 space-y-6">
+        <!-- Header -->
         <div class="flex items-center justify-between border-b border-slate-700 pb-4">
             <h1 class="text-2xl font-bold gold-text flex items-center gap-2">
                 <i class="fa-solid fa-bolt"></i> Flaxxi AI
@@ -30,7 +30,7 @@
             </div>
         </div>
 
-        <!-- Chat Input Area -->
+        <!-- Chat Input -->
         <div class="space-y-4">
             <div>
                 <label class="block text-sm font-medium text-slate-400 mb-1">Apna Sawal Likhie</label>
@@ -41,7 +41,7 @@
                 <button onclick="sendInstantMessage()" class="flex-1 gold-btn text-white font-semibold py-3 rounded-xl shadow-lg transition flex items-center justify-center gap-2">
                     <i class="fa-solid fa-paper-plane"></i> Ask Flaxxi
                 </button>
-                <button onclick="startVoiceInput()" class="bg-indigo-600 hover:bg-indigo-500 text-white font-semibold px-4 py-3 rounded-xl transition flex items-center justify-center gap-1" title="Voice Input">
+                <button onclick="startVoiceInput()" class="bg-indigo-600 hover:bg-indigo-500 text-white font-semibold px-4 py-3 rounded-xl transition flex items-center justify-center gap-1">
                     <i class="fa-solid fa-microphone" id="micIcon"></i>
                 </button>
                 <button onclick="clearText()" class="bg-slate-700 hover:bg-slate-600 text-slate-300 font-semibold px-4 py-3 rounded-xl transition">
@@ -50,7 +50,7 @@
             </div>
         </div>
 
-        <!-- Output Area with Speech -->
+        <!-- Output Box -->
         <div class="space-y-2">
             <div class="flex items-center justify-between">
                 <label class="block text-sm font-medium text-slate-400">Response</label>
@@ -58,9 +58,7 @@
                     <i class="fa-solid fa-volume-high"></i> Read aloud
                 </button>
             </div>
-            <div id="outputBox" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-4 min-h-[100px] text-slate-200 whitespace-pre-line text-sm">
-                Waiting for input...
-            </div>
+            <pre id="outputBox" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-4 min-h-[120px] max-h-[300px] overflow-y-auto text-slate-200 text-sm font-mono whitespace-pre-wrap">Waiting for input...</pre>
         </div>
     </div>
 
@@ -77,16 +75,18 @@
             let reply = "";
             const text = input.toLowerCase();
 
-            if (text.includes("kisne banaya") || text.includes("who made you") || text.includes("who created you") || text.includes("tumhe kisne banaya")) {
+            if (text.includes("kisne banaya") || text.includes("who made you") || text.includes("tumhe kisne banaya")) {
                 reply = "Mujhe Tenzino ne banaya hai!";
-            } else if (text.includes("youtube") || text.includes("movie")) {
-                reply = "YouTube jaisa application banane ke liye aapko HTML, CSS, aur JavaScript frontend, aur movie storage backend chahiye hoga. Tenzino ismein aapki help kar sakte hain.";
-            } else if (text.includes("hello") || text.includes("hi")) {
+            } 
+            else if (text.includes("youtube") || text.includes("movie") || text.includes("code")) {
+                reply = `Yeh raha YouTube / Movie App ka full HTML Code (Created by Tenzino):\n\n` +
+`<!DOCTYPE html>\n<html>\n<head>\n  <title>My Movie App</title>\n  <style>\n    body { background: #111; color: white; font-family: sans-serif; text-align: center; }\n    .video-card { background: #222; padding: 15px; margin: 10px; border-radius: 10px; }\n  </style>\n</head>\n<body>\n  <h1>My Video Platform</h1>\n  <div class="video-card">\n    <h3>Sample Video</h3>\n    <iframe width="100%" height="200" src="https://www.youtube.com/embed/tgbNymZ7vqY"></iframe>\n  </div>\n</body>\n</html>`;
+            } 
+            else if (text.includes("hello") || text.includes("hi")) {
                 reply = "Namaste! Main Flaxxi AI hoon. Main aapki kya madad kar sakta hoon?";
-            } else if (text.includes("name") || text.includes("naam")) {
-                reply = "Mera naam Flaxxi AI hai!";
-            } else {
-                reply = `Flaxxi AI Answer: "${input}"\nIs sawal ka advanced jawab mere agle update mein aayega! Abhi main testing phase mein hoon.`;
+            } 
+            else {
+                reply = `Flaxxi AI Response:\nAapka sawal: "${input}"\n\nTenzino ke dwara banaya gaya yeh Flaxxi AI system ab aapko direct source codes aur answers serve karega!`;
             }
 
             outputBox.innerText = reply;
@@ -99,29 +99,18 @@
 
         function startVoiceInput() {
             const recognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-            if (!recognition) {
-                alert("Aapka browser Speech Recognition ko support nahi karta hai.");
-                return;
-            }
+            if (!recognition) return alert("Browser voice input support nahi karta.");
             const rec = new recognition();
             rec.lang = 'hi-IN';
             const micIcon = document.getElementById('micIcon');
-            micIcon.classList.remove('fa-microphone');
-            micIcon.classList.add('fa-spinner', 'fa-spin');
+            micIcon.className = 'fa-solid fa-spinner fa-spin';
 
-            rec.onresult = function(event) {
-                const speechToText = event.results[0][0].transcript;
-                document.getElementById('userInput').value = speechToText;
-                micIcon.classList.remove('fa-spinner', 'fa-spin');
-                micIcon.classList.add('fa-microphone');
+            rec.onresult = (e) => {
+                document.getElementById('userInput').value = e.results[0][0].transcript;
+                micIcon.className = 'fa-solid fa-microphone';
                 sendInstantMessage();
             };
-
-            rec.onerror = function() {
-                micIcon.classList.remove('fa-spinner', 'fa-spin');
-                micIcon.classList.add('fa-microphone');
-            };
-
+            rec.onerror = () => micIcon.className = 'fa-solid fa-microphone';
             rec.start();
         }
 
