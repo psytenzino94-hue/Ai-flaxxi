@@ -36,6 +36,9 @@
                 <button onclick="sendInstantMessage()" class="flex-1 gold-btn text-white font-semibold py-3 rounded-xl shadow-lg transition flex items-center justify-center gap-2">
                     <i class="fa-solid fa-paper-plane"></i> Ask Flaxxi
                 </button>
+                <button onclick="startVoiceInput()" class="bg-indigo-600 hover:bg-indigo-500 text-white font-semibold px-4 py-3 rounded-xl transition flex items-center justify-center gap-1" title="Voice Input">
+                    <i class="fa-solid fa-microphone" id="micIcon"></i>
+                </button>
                 <button onclick="clearText()" class="bg-slate-700 hover:bg-slate-600 text-slate-300 font-semibold px-4 py-3 rounded-xl transition">
                     Clear
                 </button>
@@ -44,7 +47,12 @@
 
         <!-- Output Area -->
         <div class="space-y-2">
-            <label class="block text-sm font-medium text-slate-400">Response</label>
+            <div class="flex items-center justify-between">
+                <label class="block text-sm font-medium text-slate-400">Response</label>
+                <button onclick="speakResponse()" class="text-amber-500 hover:text-amber-400 text-xs flex items-center gap-1 bg-amber-500/10 px-2 py-1 rounded border border-amber-500/20">
+                    <i class="fa-solid fa-volume-high"></i> Read aloud
+                </button>
+            </div>
             <div id="outputBox" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-4 min-h-[100px] text-slate-200 whitespace-pre-line text-sm">
                 Waiting for input...
             </div>
@@ -61,25 +69,61 @@
                 return;
             }
 
-            // Zero delay super-fast response logic
-            let reply = "Flaxxi AI Response: ";
+            let reply = "";
             const text = input.toLowerCase();
 
-            if (text.includes("hello") || text.includes("hi")) {
-                reply += "Namaste! Main Flaxxi AI hoon. Main aapki kya madad kar sakta hoon?";
+            if (text.includes("kisne banaya") || text.includes("who made you") || text.includes("who created you") || text.includes("tumhe kisne banaya")) {
+                reply = "Mujhe Tenzino ne banaya hai!";
+            } else if (text.includes("hello") || text.includes("hi")) {
+                reply = "Namaste! Main Flaxxi AI hoon. Main aapki kya madad kar sakta hoon?";
             } else if (text.includes("name") || text.includes("naam")) {
-                reply += "Mera naam Flaxxi AI hai!";
+                reply = "Mera naam Flaxxi AI hai, aur mujhe Tenzino ne banaya hai!";
             } else {
-                reply += `Aapka sawal tha: "${input}". Main fast response system par kaam kar raha hoon!`;
+                reply = `Flaxxi AI Response: Aapka sawal tha: "${input}". Main instant mode mein active hoon!`;
             }
 
-            // Direct DOM update (Instant)
             outputBox.innerText = reply;
         }
 
         function clearText() {
             document.getElementById('userInput').value = '';
             document.getElementById('outputBox').innerText = 'Waiting for input...';
+        }
+
+        function startVoiceInput() {
+            const recognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            if (!recognition) {
+                alert("Aapka browser Speech Recognition ko support nahi karta hai.");
+                return;
+            }
+            const rec = new recognition();
+            rec.lang = 'hi-IN';
+            const micIcon = document.getElementById('micIcon');
+            micIcon.classList.remove('fa-microphone');
+            micIcon.classList.add('fa-spinner', 'fa-spin');
+
+            rec.onresult = function(event) {
+                const speechToText = event.results[0][0].transcript;
+                document.getElementById('userInput').value = speechToText;
+                micIcon.classList.remove('fa-spinner', 'fa-spin');
+                micIcon.classList.add('fa-microphone');
+                sendInstantMessage();
+            };
+
+            rec.onerror = function() {
+                micIcon.classList.remove('fa-spinner', 'fa-spin');
+                micIcon.classList.add('fa-microphone');
+            };
+
+            rec.start();
+        }
+
+        function speakResponse() {
+            const text = document.getElementById('outputBox').innerText;
+            if (!text || text === "Waiting for input...") return;
+            const speech = new SpeechSynthesisUtterance(text);
+            speech.lang = 'hi-IN';
+            window.speechSynthesis.speak(speech);
         }
     </script>
 </body>
