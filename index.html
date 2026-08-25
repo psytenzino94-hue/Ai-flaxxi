@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Flaxxi AI - Smart Assistant</title>
+    <title>Flaxxi AI - Multi-Voice Assistant</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
@@ -68,18 +68,27 @@
             </div>
         </div>
 
-        <!-- Output Display Section -->
+        <!-- Output & Voice Control Section -->
         <div class="space-y-3">
-            <div class="flex items-center justify-between">
+            <div class="flex flex-wrap items-center justify-between gap-2">
                 <label class="block text-sm font-medium text-amber-400 flex items-center gap-2">
                     <i class="fa-solid fa-message"></i> Response
                 </label>
-                <div class="flex gap-2">
+                
+                <div class="flex items-center gap-2">
+                    <!-- Multiple Voice Select Dropdown -->
+                    <select id="voiceSelect" class="bg-slate-950 text-slate-300 text-xs border border-slate-800 rounded-lg px-2 py-1.5 focus:outline-none">
+                        <option value="">Default Voice</option>
+                    </select>
+
+                    <!-- Play / Stop Button -->
+                    <button id="playBtn" onclick="toggleAudio()" class="text-xs bg-amber-500/10 text-amber-400 px-3 py-1.5 rounded-lg border border-amber-500/20 flex items-center gap-1 font-semibold">
+                        <i id="playIcon" class="fa-solid fa-play"></i> <span id="playText">Play</span>
+                    </button>
+
+                    <!-- Copy Button -->
                     <button onclick="copyCode()" class="text-xs bg-slate-800 hover:bg-slate-700 text-slate-300 px-3 py-1.5 rounded-lg border border-slate-700 flex items-center gap-1">
                         <i class="fa-solid fa-copy"></i> Copy
-                    </button>
-                    <button onclick="speakResponse()" class="text-xs bg-amber-500/10 text-amber-400 px-3 py-1.5 rounded-lg border border-amber-500/20 flex items-center gap-1">
-                        <i class="fa-solid fa-volume-high"></i> Read
                     </button>
                 </div>
             </div>
@@ -90,6 +99,27 @@
 
     <script>
         let uploadedImageBase64 = "";
+        let availableVoices = [];
+        let isSpeaking = false;
+
+        // Load Multiple Voices System
+        function loadVoices() {
+            availableVoices = window.speechSynthesis.getVoices();
+            const voiceSelect = document.getElementById('voiceSelect');
+            voiceSelect.innerHTML = '<option value="">Default Voice</option>';
+
+            availableVoices.forEach((voice, index) => {
+                const option = document.createElement('option');
+                option.value = index;
+                option.innerText = `${voice.name} (${voice.lang})`;
+                voiceSelect.appendChild(option);
+            });
+        }
+
+        if (typeof speechSynthesis !== 'undefined') {
+            speechSynthesis.onvoiceschanged = loadVoices;
+            loadVoices();
+        }
 
         function handleImageUpload(event) {
             const file = event.target.files[0];
@@ -112,6 +142,7 @@
         }
 
         function processAIResponse() {
+            stopAudio();
             const input = document.getElementById('userInput').value.trim();
             const outputBox = document.getElementById('outputBox');
 
@@ -123,49 +154,25 @@
             const query = input.toLowerCase();
             let responseText = "";
 
-            // Check if user specifically requested code or app development
             const wantsCode = query.includes("code") || query.includes("script") || query.includes("html") || query.includes("make app") || query.includes("banao") || query.includes("bana he") || query.includes("hack");
 
             if (uploadedImageBase64 && !input) {
                 responseText = "Aapne image upload ki hai. Main is image ko analyze kar sakta hoon! Aap is baare mein kya poochhna chahte hain?";
             }
             else if (!wantsCode) {
-                // Natural Conversation Logic
-                if (query.includes("hlo") || query.includes("hello") || query.includes("hi") || query.includes("hey")) {
+                if (query.includes("hlo") || query.includes("hello") || query.includes("hi")) {
                     responseText = "Hello! Main Flaxxi AI hoon. Aaj main aapki kya madad kar sakta hoon?";
-                } else if (query.includes("kaise ho") || query.includes("how are you")) {
+                } else if (query.includes("kaise ho")) {
                     responseText = "Main badiya hoon! Aap bataiye aap kaise hain?";
-                } else if (query.includes("kisne banaya") || query.includes("who made you")) {
+                } else if (query.includes("kisne banaya")) {
                     responseText = "Mujhe Tenzino ne banaya hai!";
-                } else if (query.includes("naam kya hai") || query.includes("what is your name")) {
-                    responseText = "Mera naam Flaxxi AI hai!";
                 } else {
                     responseText = `Haan ji, aapne bola: "${input}". Main aapki is baare mein poori madad kar sakta hoon!`;
                 }
             } 
             else {
-                // Code Generation Logic only when requested
-                if (query.includes("carrom") || query.includes("aim") || query.includes("hack")) {
-                    responseText = 
-`<!-- CARROM AIM PRO APP CODE -->
-<!DOCTYPE html>
-<html>
-<head>
-    <style>
-        body { background: #050b14; color: white; text-align: center; font-family: sans-serif; }
-        .board { width: 280px; height: 280px; background: #15803d; border: 6px solid #78350f; border-radius: 50%; margin: 20px auto; position: relative; }
-        .striker { width: 30px; height: 30px; background: white; border-radius: 50%; position: absolute; bottom: 20px; left: 125px; }
-        .aim-line { position: absolute; bottom: 50px; left: 139px; width: 3px; height: 160px; background: #facc15; }
-    </style>
-</head>
-<body>
-    <h3>Carrom Aim Tool</h3>
-    <div class="board"><div class="aim-line"></div><div class="striker"></div></div>
-</body>
-</html>`;
-                } else {
-                    responseText = 
-`<!-- GENERATED APP CODE: ${input.toUpperCase()} -->
+                responseText = 
+`<!-- GENERATED APP CODE -->
 <!DOCTYPE html>
 <html>
 <head>
@@ -181,10 +188,49 @@
     </div>
 </body>
 </html>`;
-                }
             }
 
             outputBox.value = responseText;
+        }
+
+        // Play / Stop Audio Control Function
+        function toggleAudio() {
+            if (isSpeaking) {
+                stopAudio();
+            } else {
+                playAudio();
+            }
+        }
+
+        function playAudio() {
+            const text = document.getElementById('outputBox').value;
+            if (!text) return alert("Read karne ke liye content nahi hai.");
+
+            window.speechSynthesis.cancel();
+            const speech = new SpeechSynthesisUtterance(text);
+
+            const voiceSelect = document.getElementById('voiceSelect');
+            if (voiceSelect.value !== "" && availableVoices[voiceSelect.value]) {
+                speech.voice = availableVoices[voiceSelect.value];
+            } else {
+                speech.lang = 'hi-IN';
+            }
+
+            speech.onend = () => stopAudio();
+            speech.onerror = () => stopAudio();
+
+            window.speechSynthesis.speak(speech);
+            isSpeaking = true;
+
+            document.getElementById('playIcon').className = 'fa-solid fa-square';
+            document.getElementById('playText').innerText = 'Stop';
+        }
+
+        function stopAudio() {
+            window.speechSynthesis.cancel();
+            isSpeaking = false;
+            document.getElementById('playIcon').className = 'fa-solid fa-play';
+            document.getElementById('playText').innerText = 'Play';
         }
 
         function copyCode() {
@@ -196,6 +242,7 @@
         }
 
         function clearText() {
+            stopAudio();
             document.getElementById('userInput').value = '';
             document.getElementById('outputBox').value = '';
             removeImage();
@@ -216,14 +263,6 @@
             };
             rec.onerror = () => micIcon.className = 'fa-solid fa-microphone';
             rec.start();
-        }
-
-        function speakResponse() {
-            const text = document.getElementById('outputBox').value;
-            if (!text) return alert("Read karne ke liye content nahi hai.");
-            const speech = new SpeechSynthesisUtterance(text);
-            speech.lang = 'hi-IN';
-            window.speechSynthesis.speak(speech);
         }
     </script>
 </body>
