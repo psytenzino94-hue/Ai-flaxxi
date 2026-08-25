@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Flaxxi AI - Full App Engine</title>
+    <title>Flaxxi AI - Smart Assistant</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
@@ -20,45 +20,63 @@
         <!-- Header -->
         <div class="flex items-center justify-between border-b border-slate-800 pb-4">
             <h1 class="text-2xl font-bold gold-text flex items-center gap-2">
-                <i class="fa-solid fa-bolt"></i> Flaxxi AI <span class="text-xs text-slate-400 font-normal">Full App Generator</span>
+                <i class="fa-solid fa-bolt"></i> Flaxxi AI
             </h1>
             <div class="flex items-center gap-2">
                 <a href="admin.html" class="text-slate-400 hover:text-amber-400 p-2 rounded-lg bg-slate-800 border border-slate-700" title="Open Admin Panel">
                     <i class="fa-solid fa-user-shield"></i>
                 </a>
-                <span class="text-xs bg-emerald-500/10 text-emerald-400 px-2.5 py-1 rounded-full border border-emerald-500/20">Engine Active</span>
+                <span class="text-xs bg-emerald-500/10 text-emerald-400 px-2.5 py-1 rounded-full border border-emerald-500/20">Online</span>
             </div>
         </div>
 
         <!-- Input Section -->
         <div class="space-y-4">
             <div>
-                <label class="block text-sm font-medium text-slate-400 mb-1">Aapko kya app, game ya tool banana hai?</label>
-                <textarea id="userInput" rows="3" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-white focus:outline-none focus:border-amber-500 transition" placeholder="Jaise: Carrom Aim Hack App, YouTube Video Player, Calculator, etc..."></textarea>
+                <label class="block text-sm font-medium text-slate-400 mb-1">Apna Sawal Likhie</label>
+                <textarea id="userInput" rows="3" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-white focus:outline-none focus:border-amber-500 transition" placeholder="Chat karein ya code mangne ke liye type karein..."></textarea>
             </div>
 
-            <div class="flex gap-2">
-                <button onclick="generateFullApp()" class="flex-1 gold-btn text-white font-semibold py-3 rounded-xl shadow-lg transition flex items-center justify-center gap-2">
-                    <i class="fa-solid fa-wand-magic-sparkles"></i> Generate Full App Code
+            <!-- Image Preview Area -->
+            <div id="imagePreviewContainer" class="hidden flex items-center gap-3 bg-slate-950 p-2 rounded-xl border border-slate-800">
+                <img id="imagePreview" src="" class="w-12 h-12 object-cover rounded-lg border border-amber-500" alt="Uploaded Image">
+                <div class="flex-1 text-xs text-slate-300 truncate" id="imageName">image.jpg</div>
+                <button onclick="removeImage()" class="text-red-400 hover:text-red-300 p-2"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+
+            <div class="flex flex-wrap gap-2 items-center">
+                <!-- Ask Button -->
+                <button onclick="processAIResponse()" class="flex-1 gold-btn text-white font-semibold py-3 px-4 rounded-xl shadow-lg transition flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-paper-plane"></i> Ask Flaxxi
                 </button>
+
+                <!-- Photo Upload Button -->
+                <label class="bg-slate-800 hover:bg-slate-700 text-amber-400 border border-slate-700 font-semibold px-4 py-3 rounded-xl transition cursor-pointer flex items-center justify-center gap-2" title="Upload Photo">
+                    <i class="fa-solid fa-image"></i> Add Photo
+                    <input type="file" id="imageInput" accept="image/*" class="hidden" onchange="handleImageUpload(event)">
+                </label>
+
+                <!-- Voice Input Button -->
                 <button onclick="startVoiceInput()" class="bg-indigo-600 hover:bg-indigo-500 text-white font-semibold px-4 py-3 rounded-xl transition flex items-center justify-center">
                     <i class="fa-solid fa-microphone" id="micIcon"></i>
                 </button>
+
+                <!-- Clear Button -->
                 <button onclick="clearText()" class="bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold px-4 py-3 rounded-xl transition">
                     Clear
                 </button>
             </div>
         </div>
 
-        <!-- Output & Full Code Display Section -->
+        <!-- Output Display Section -->
         <div class="space-y-3">
             <div class="flex items-center justify-between">
                 <label class="block text-sm font-medium text-amber-400 flex items-center gap-2">
-                    <i class="fa-solid fa-code"></i> Full Ready-to-Use App Source Code
+                    <i class="fa-solid fa-message"></i> Response
                 </label>
                 <div class="flex gap-2">
                     <button onclick="copyCode()" class="text-xs bg-slate-800 hover:bg-slate-700 text-slate-300 px-3 py-1.5 rounded-lg border border-slate-700 flex items-center gap-1">
-                        <i class="fa-solid fa-copy"></i> Copy Code
+                        <i class="fa-solid fa-copy"></i> Copy
                     </button>
                     <button onclick="speakResponse()" class="text-xs bg-amber-500/10 text-amber-400 px-3 py-1.5 rounded-lg border border-amber-500/20 flex items-center gap-1">
                         <i class="fa-solid fa-volume-high"></i> Read
@@ -66,129 +84,121 @@
                 </div>
             </div>
             
-            <textarea id="outputBox" readonly class="w-full h-64 bg-slate-950 border border-slate-800 rounded-xl p-4 text-emerald-400 font-mono text-xs leading-relaxed focus:outline-none resize-y" placeholder="Aapka full code yahan generate hoga..."></textarea>
+            <textarea id="outputBox" readonly class="w-full h-48 bg-slate-950 border border-slate-800 rounded-xl p-4 text-slate-200 font-sans text-sm leading-relaxed focus:outline-none resize-y" placeholder="Flaxxi AI ka javab yahan dikhega..."></textarea>
         </div>
     </div>
 
     <script>
-        function generateFullApp() {
+        let uploadedImageBase64 = "";
+
+        function handleImageUpload(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    uploadedImageBase64 = e.target.result;
+                    document.getElementById('imagePreview').src = uploadedImageBase64;
+                    document.getElementById('imageName').innerText = file.name;
+                    document.getElementById('imagePreviewContainer').classList.remove('hidden');
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function removeImage() {
+            uploadedImageBase64 = "";
+            document.getElementById('imageInput').value = "";
+            document.getElementById('imagePreviewContainer').classList.add('hidden');
+        }
+
+        function processAIResponse() {
             const input = document.getElementById('userInput').value.trim();
             const outputBox = document.getElementById('outputBox');
 
-            if (!input) {
-                outputBox.value = "Kripya batayein aapko kaun sa app ya tool banana hai.";
+            if (!input && !uploadedImageBase64) {
+                outputBox.value = "Kripya koi message likhein ya photo add karein.";
                 return;
             }
 
             const query = input.toLowerCase();
-            let fullAppCode = "";
+            let responseText = "";
 
-            if (query.includes("carrom") || query.includes("hack") || query.includes("aim")) {
-                fullAppCode = 
-`<!-- ========================================== -->
-<!-- FLAXXI AI GENERATED FULL APP: CARROM AIM TOOL -->
-<!-- Created for Tenzino Platform -->
-<!-- ========================================== -->
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Carrom Pro Aim Master</title>
-    <style>
-        body { background: #090d16; color: white; text-align: center; font-family: sans-serif; padding: 20px; }
-        .board { width: 320px; height: 320px; background: #15803d; border: 8px solid #78350f; border-radius: 50%; margin: 20px auto; position: relative; box-shadow: 0 10px 25px rgba(0,0,0,0.5); }
-        .striker { width: 35px; height: 35px; background: white; border-radius: 50%; position: absolute; bottom: 30px; left: 142px; border: 2px solid #333; }
-        .aim-line { position: absolute; bottom: 65px; left: 158px; width: 4px; height: 180px; background: #facc15; transform-origin: bottom center; box-shadow: 0 0 10px #facc15; }
-        .btn { background: #d97706; color: white; border: none; padding: 10px 20px; border-radius: 8px; font-weight: bold; cursor: pointer; }
-    </style>
-</head>
-<body>
-    <h2>Carrom Aim & Guide Tool</h2>
-    <div class="board">
-        <div class="aim-line" id="aimLine"></div>
-        <div class="striker" id="striker"></div>
-    </div>
-    <button class="btn" onclick="adjustAim()">Rotate Aim Line</button>
+            // Check if user specifically requested code or app development
+            const wantsCode = query.includes("code") || query.includes("script") || query.includes("html") || query.includes("make app") || query.includes("banao") || query.includes("bana he") || query.includes("hack");
 
-    <script>
-        let angle = 0;
-        function adjustAim() {
-            angle = (angle + 15) % 60 - 30;
-            document.getElementById('aimLine').style.transform = \`rotate(\${angle}deg)\`;
-        }
-    <\/script>
-</body>
-</html>`;
-            } 
-            else if (query.includes("youtube") || query.includes("video") || query.includes("movie")) {
-                fullAppCode = 
-`<!-- ========================================== -->
-<!-- FLAXXI AI GENERATED FULL APP: VIDEO STREAMER -->
-<!-- ========================================== -->
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Flaxxi Video Streamer</title>
-    <style>
-        body { background: #0f172a; color: white; font-family: sans-serif; margin: 0; padding: 20px; text-align: center; }
-        .video-box { background: #1e293b; padding: 15px; border-radius: 12px; max-width: 500px; margin: 20px auto; border: 1px solid #334155; }
-        iframe { width: 100%vh; height: 250px; border-radius: 8px; border: none; }
-    </style>
-</head>
-<body>
-    <h1>Flaxxi Tube Hub</h1>
-    <div class="video-box">
-        <h3>Featured Stream</h3>
-        <iframe src="https://www.youtube.com/embed/tgbNymZ7vqY"></iframe>
-    </div>
-</body>
-</html>`;
+            if (uploadedImageBase64 && !input) {
+                responseText = "Aapne image upload ki hai. Main is image ko analyze kar sakta hoon! Aap is baare mein kya poochhna chahte hain?";
+            }
+            else if (!wantsCode) {
+                // Natural Conversation Logic
+                if (query.includes("hlo") || query.includes("hello") || query.includes("hi") || query.includes("hey")) {
+                    responseText = "Hello! Main Flaxxi AI hoon. Aaj main aapki kya madad kar sakta hoon?";
+                } else if (query.includes("kaise ho") || query.includes("how are you")) {
+                    responseText = "Main badiya hoon! Aap bataiye aap kaise hain?";
+                } else if (query.includes("kisne banaya") || query.includes("who made you")) {
+                    responseText = "Mujhe Tenzino ne banaya hai!";
+                } else if (query.includes("naam kya hai") || query.includes("what is your name")) {
+                    responseText = "Mera naam Flaxxi AI hai!";
+                } else {
+                    responseText = `Haan ji, aapne bola: "${input}". Main aapki is baare mein poori madad kar sakta hoon!`;
+                }
             } 
             else {
-                fullAppCode = 
-`<!-- ========================================== -->
-<!-- FLAXXI AI GENERATED FULL APP FOR: ${input.toUpperCase()} -->
-<!-- Creator: Tenzino Ecosystem -->
-<!-- ========================================== -->
+                // Code Generation Logic only when requested
+                if (query.includes("carrom") || query.includes("aim") || query.includes("hack")) {
+                    responseText = 
+`<!-- CARROM AIM PRO APP CODE -->
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>${input}</title>
     <style>
-        body { background: #0b0f19; color: #f8fafc; font-family: 'Segoe UI', sans-serif; padding: 20px; text-align: center; }
-        .card { background: #111827; border: 1px solid #d97706; padding: 30px; border-radius: 16px; max-width: 500px; margin: 40px auto; box-shadow: 0 10px 25px rgba(0,0,0,0.5); }
-        h1 { color: #f59e0b; }
-        .action-btn { background: #d97706; color: white; padding: 12px 24px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; margin-top: 15px; }
+        body { background: #050b14; color: white; text-align: center; font-family: sans-serif; }
+        .board { width: 280px; height: 280px; background: #15803d; border: 6px solid #78350f; border-radius: 50%; margin: 20px auto; position: relative; }
+        .striker { width: 30px; height: 30px; background: white; border-radius: 50%; position: absolute; bottom: 20px; left: 125px; }
+        .aim-line { position: absolute; bottom: 50px; left: 139px; width: 3px; height: 160px; background: #facc15; }
+    </style>
+</head>
+<body>
+    <h3>Carrom Aim Tool</h3>
+    <div class="board"><div class="aim-line"></div><div class="striker"></div></div>
+</body>
+</html>`;
+                } else {
+                    responseText = 
+`<!-- GENERATED APP CODE: ${input.toUpperCase()} -->
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body { background: #0b0f19; color: #fff; font-family: sans-serif; text-align: center; padding: 20px; }
+        .card { background: #111827; border: 1px solid #d97706; padding: 20px; border-radius: 12px; }
     </style>
 </head>
 <body>
     <div class="card">
-        <h1>${input}</h1>
-        <p>Aapke diye gaye topic par yeh complete application template taiyar kiya gaya hai.</p>
-        <button class="action-btn" onclick="alert('App is running successfully!')">Test App Action</button>
+        <h2>${input}</h2>
+        <p>Code generated successfully by Flaxxi AI.</p>
     </div>
 </body>
 </html>`;
+                }
             }
 
-            outputBox.value = fullAppCode;
+            outputBox.value = responseText;
         }
 
         function copyCode() {
             const outputBox = document.getElementById('outputBox');
-            if(!outputBox.value) return alert("Pehle code generate karein!");
+            if(!outputBox.value) return alert("Pehle koi message generate hone dein!");
             outputBox.select();
             document.execCommand('copy');
-            alert('Full App Code Copied Successfully!');
+            alert('Copied to Clipboard!');
         }
 
         function clearText() {
             document.getElementById('userInput').value = '';
             document.getElementById('outputBox').value = '';
+            removeImage();
         }
 
         function startVoiceInput() {
@@ -202,7 +212,7 @@
             rec.onresult = (e) => {
                 document.getElementById('userInput').value = e.results[0][0].transcript;
                 micIcon.className = 'fa-solid fa-microphone';
-                generateFullApp();
+                processAIResponse();
             };
             rec.onerror = () => micIcon.className = 'fa-solid fa-microphone';
             rec.start();
@@ -210,8 +220,8 @@
 
         function speakResponse() {
             const text = document.getElementById('outputBox').value;
-            if (!text) return alert("Koi code read karne ke liye nahi hai.");
-            const speech = new SpeechSynthesisUtterance("Aapka full application code generate ho chuka hai.");
+            if (!text) return alert("Read karne ke liye content nahi hai.");
+            const speech = new SpeechSynthesisUtterance(text);
             speech.lang = 'hi-IN';
             window.speechSynthesis.speak(speech);
         }
