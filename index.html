@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Flaxxi AI - Multi-Voice Assistant</title>
+    <title>Flaxxi AI - Multi-Language Assistant</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
@@ -34,7 +34,7 @@
         <div class="space-y-4">
             <div>
                 <label class="block text-sm font-medium text-slate-400 mb-1">Apna Sawal Likhie</label>
-                <textarea id="userInput" rows="3" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-white focus:outline-none focus:border-amber-500 transition" placeholder="Chat karein ya code mangne ke liye type karein..."></textarea>
+                <textarea id="userInput" rows="3" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-white focus:outline-none focus:border-amber-500 transition" placeholder="Aaisa app bana he full guide do..."></textarea>
             </div>
 
             <!-- Image Preview Area -->
@@ -76,8 +76,16 @@
                 </label>
                 
                 <div class="flex items-center gap-2">
+                    <!-- Language Selector -->
+                    <select id="langSelect" onchange="loadVoices()" class="bg-slate-950 text-slate-300 text-xs border border-slate-800 rounded-lg px-2 py-1.5 focus:outline-none">
+                        <option value="hi-IN">Hindi (India)</option>
+                        <option value="en-US">English (US)</option>
+                        <option value="ne-NP">Nepali</option>
+                        <option value="es-ES">Spanish</option>
+                    </select>
+
                     <!-- Multiple Voice Select Dropdown -->
-                    <select id="voiceSelect" class="bg-slate-950 text-slate-300 text-xs border border-slate-800 rounded-lg px-2 py-1.5 focus:outline-none">
+                    <select id="voiceSelect" class="bg-slate-950 text-slate-300 text-xs border border-slate-800 rounded-lg px-2 py-1.5 focus:outline-none max-w-[130px] truncate">
                         <option value="">Default Voice</option>
                     </select>
 
@@ -93,7 +101,7 @@
                 </div>
             </div>
             
-            <textarea id="outputBox" readonly class="w-full h-48 bg-slate-950 border border-slate-800 rounded-xl p-4 text-slate-200 font-sans text-sm leading-relaxed focus:outline-none resize-y" placeholder="Flaxxi AI ka javab yahan dikhega..."></textarea>
+            <textarea id="outputBox" readonly class="w-full h-56 bg-slate-950 border border-slate-800 rounded-xl p-4 text-slate-200 font-mono text-xs leading-relaxed focus:outline-none resize-y" placeholder="Flaxxi AI ka javab yahan dikhega..."></textarea>
         </div>
     </div>
 
@@ -102,13 +110,18 @@
         let availableVoices = [];
         let isSpeaking = false;
 
-        // Load Multiple Voices System
         function loadVoices() {
+            if (typeof speechSynthesis === 'undefined') return;
             availableVoices = window.speechSynthesis.getVoices();
             const voiceSelect = document.getElementById('voiceSelect');
+            const selectedLang = document.getElementById('langSelect').value;
             voiceSelect.innerHTML = '<option value="">Default Voice</option>';
 
-            availableVoices.forEach((voice, index) => {
+            const filteredVoices = availableVoices.filter(v => v.lang.startsWith(selectedLang.substring(0,2)));
+            const voiceList = filteredVoices.length > 0 ? filteredVoices : availableVoices;
+
+            voiceList.forEach((voice) => {
+                const index = availableVoices.indexOf(voice);
                 const option = document.createElement('option');
                 option.value = index;
                 option.innerText = `${voice.name} (${voice.lang})`;
@@ -117,8 +130,8 @@
         }
 
         if (typeof speechSynthesis !== 'undefined') {
-            speechSynthesis.onvoiceschanged = loadVoices;
-            loadVoices();
+            window.speechSynthesis.onvoiceschanged = loadVoices;
+            setTimeout(loadVoices, 500);
         }
 
         function handleImageUpload(event) {
@@ -154,46 +167,53 @@
             const query = input.toLowerCase();
             let responseText = "";
 
-            const wantsCode = query.includes("code") || query.includes("script") || query.includes("html") || query.includes("make app") || query.includes("banao") || query.includes("bana he") || query.includes("hack");
+            const hasImage = uploadedImageBase64 !== "";
+            const wantsAppOrCode = query.includes("aaisa app") || query.includes("app bana") || query.includes("code") || query.includes("carrom") || query.includes("aim") || query.includes("hack") || query.includes("guide");
 
-            if (uploadedImageBase64 && !input) {
-                responseText = "Aapne image upload ki hai. Main is image ko analyze kar sakta hoon! Aap is baare mein kya poochhna chahte hain?";
-            }
-            else if (!wantsCode) {
-                if (query.includes("hlo") || query.includes("hello") || query.includes("hi")) {
-                    responseText = "Hello! Main Flaxxi AI hoon. Aaj main aapki kya madad kar sakta hoon?";
-                } else if (query.includes("kaise ho")) {
-                    responseText = "Main badiya hoon! Aap bataiye aap kaise hain?";
-                } else if (query.includes("kisne banaya")) {
-                    responseText = "Mujhe Tenzino ne banaya hai!";
-                } else {
-                    responseText = `Haan ji, aapne bola: "${input}". Main aapki is baare mein poori madad kar sakta hoon!`;
-                }
-            } 
-            else {
+            if (hasImage || wantsAppOrCode) {
+                // Generates Exact Carrom Aim Guide App Code when Photo + Query is provided
                 responseText = 
-`<!-- GENERATED APP CODE -->
+`<!-- FLAXXI AI: CARROM AIM PRO FULL APP CODE -->
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carrom Aim Line Pro App</title>
     <style>
-        body { background: #0b0f19; color: #fff; font-family: sans-serif; text-align: center; padding: 20px; }
-        .card { background: #111827; border: 1px solid #d97706; padding: 20px; border-radius: 12px; }
+        body { background: #050b14; color: white; text-align: center; font-family: sans-serif; padding: 20px; }
+        .board { width: 300px; height: 300px; background: #15803d; border: 8px solid #78350f; border-radius: 50%; margin: 20px auto; position: relative; box-shadow: 0 0 20px rgba(0,0,0,0.8); }
+        .striker { width: 34px; height: 34px; background: #fff; border-radius: 50%; position: absolute; bottom: 25px; left: 133px; border: 2px solid #333; }
+        .aim-line { position: absolute; bottom: 58px; left: 149px; width: 3px; height: 170px; background: #facc15; transform-origin: bottom center; box-shadow: 0 0 8px #facc15; }
+        .btn { background: #d97706; color: white; border: none; padding: 12px 24px; border-radius: 8px; font-weight: bold; cursor: pointer; margin-top: 10px; }
     </style>
 </head>
 <body>
-    <div class="card">
-        <h2>${input}</h2>
-        <p>Code generated successfully by Flaxxi AI.</p>
+    <h2>Carrom Pro Aim Guide App</h2>
+    <div class="board">
+        <div class="aim-line" id="aimLine"></div>
+        <div class="striker"></div>
     </div>
+    <button class="btn" onclick="rotateAim()">Rotate Aim Guide Line</button>
+
+    <script>
+        let angle = 0;
+        function rotateAim() {
+            angle = (angle + 15) % 60 - 30;
+            document.getElementById('aimLine').style.transform = \`rotate(\${angle}deg)\`;
+        }
+    <\/script>
 </body>
 </html>`;
+            } else if (query.includes("hlo") || query.includes("hello") || query.includes("hi")) {
+                responseText = "Hello! Main Flaxxi AI hoon. Main aapki kya madad kar sakta hoon?";
+            } else {
+                responseText = `Flaxxi AI Response:\nAapka question: "${input}". Main is baare mein aapki help kar sakta hoon.`;
             }
 
             outputBox.value = responseText;
         }
 
-        // Play / Stop Audio Control Function
         function toggleAudio() {
             if (isSpeaking) {
                 stopAudio();
@@ -210,11 +230,12 @@
             const speech = new SpeechSynthesisUtterance(text);
 
             const voiceSelect = document.getElementById('voiceSelect');
+            const selectedLang = document.getElementById('langSelect').value;
+
             if (voiceSelect.value !== "" && availableVoices[voiceSelect.value]) {
                 speech.voice = availableVoices[voiceSelect.value];
-            } else {
-                speech.lang = 'hi-IN';
             }
+            speech.lang = selectedLang;
 
             speech.onend = () => stopAudio();
             speech.onerror = () => stopAudio();
@@ -235,7 +256,7 @@
 
         function copyCode() {
             const outputBox = document.getElementById('outputBox');
-            if(!outputBox.value) return alert("Pehle koi message generate hone dein!");
+            if(!outputBox.value) return alert("Pehle koi response generate hone dein!");
             outputBox.select();
             document.execCommand('copy');
             alert('Copied to Clipboard!');
@@ -252,7 +273,7 @@
             const recognition = window.SpeechRecognition || window.webkitSpeechRecognition;
             if (!recognition) return alert("Browser voice input support nahi karta.");
             const rec = new recognition();
-            rec.lang = 'hi-IN';
+            rec.lang = document.getElementById('langSelect').value;
             const micIcon = document.getElementById('micIcon');
             micIcon.className = 'fa-solid fa-spinner fa-spin';
 
