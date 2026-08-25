@@ -5,248 +5,81 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Flaxxi AI - User Chat</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        geminiDark: '#131314',
-                        geminiSurface: '#1e1f20',
-                        geminiBorder: '#333537',
-                        geminiHover: '#2b2c2e',
-                    }
-                }
-            }
-        }
-    </script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body { background-color: #0f172a; color: #f8fafc; font-family: 'Segoe UI', sans-serif; }
+        .gold-border { border-color: #d97706; }
+        .gold-text { color: #f59e0b; }
+        .gold-btn { background: linear-gradient(135deg, #d97706, #b45309); }
+        .gold-btn:hover { background: linear-gradient(135deg, #b45309, #92400e); }
+    </style>
 </head>
-<body class="bg-geminiDark text-gray-200 font-sans h-screen w-screen overflow-hidden flex flex-col">
+<body class="min-h-screen flex flex-col items-center justify-center p-4">
 
-    <!-- Top Bar -->
-    <header class="h-16 border-b border-geminiBorder flex items-center justify-between px-6 bg-geminiDark shrink-0">
-        <div class="flex items-center space-x-2 text-blue-400 font-bold text-lg">
-            <i class="fa-solid fa-sparkles"></i> Flaxxi AI
-        </div>
-        <div class="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center font-bold text-white text-sm">U</div>
-    </header>
-
-    <!-- Chat Container -->
-    <main class="flex-1 flex flex-col items-center justify-center p-4 overflow-y-auto">
-        <div class="w-full max-w-lg bg-geminiSurface border border-geminiBorder rounded-2xl p-6 shadow-2xl space-y-4">
-            <div class="text-center">
-                <h2 class="text-xl font-bold text-blue-400 flex items-center justify-center gap-2">
-                    <i class="fa-solid fa-bolt"></i> Flaxxi Assistant
-                </h2>
-                <p class="text-xs text-gray-400 mt-1">Fast & Smart AI Chat</p>
-            </div>
-            
-            <div class="space-y-2">
-                <label class="text-xs text-gray-400 font-medium">Apna Sawal Likhie</label>
-                <textarea id="userQuery" rows="3" class="w-full bg-geminiDark border border-geminiBorder rounded-xl p-3 text-sm text-white focus:outline-none focus:border-blue-500 resize-none" placeholder="Kuch bhi puchhiye..."></textarea>
-            </div>
-
-            <div class="flex items-center gap-2">
-                <button onclick="askFlaxxi()" class="flex-1 bg-blue-600 hover:bg-blue-500 text-white py-2.5 rounded-xl font-medium text-sm transition shadow">Ask Flaxxi</button>
-                <button onclick="document.getElementById('userQuery').value=''" class="px-4 py-2.5 bg-geminiHover text-gray-300 rounded-xl text-sm hover:text-white transition">Clear</button>
-            </div>
-
-            <div class="space-y-1">
-                <span class="text-xs text-gray-400">Response</span>
-                <div id="chatResponse" class="bg-geminiDark border border-geminiBorder rounded-xl p-3 text-sm text-gray-300 min-h-[60px] flex items-center">
-                    AI response will appear here instantly...
-                </div>
-            </div>
-        </div>
-    </main>
-
-    <script>
-        function askFlaxxi() {
-            let q = document.getElementById('userQuery').value.trim();
-            let resp = document.getElementById('chatResponse');
-            if(!q) {
-                resp.innerText = "Pehle kuch type karein!";
-                return;
-            }
-            // Fast simulated or real response handler
-            resp.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin text-blue-400 mr-2"></i> Thinking...';
-            setTimeout(() => {
-                resp.innerText = "Flaxxi Answer: Yeh aapke sawal '" + q + "' ka fast response hai!";
-            }, 300); // Super fast response timer
-        }
-    </script>
-</body>
-</html>
-te transition"><i class="fa-solid fa-microphone"></i> Voice</button>
-                    <button onclick="document.getElementById('userQuery').value=''" class="px-4 py-2.5 bg-geminiHover text-gray-300 rounded-xl text-sm hover:text-white transition">Clear</button>
-                </div>
-
-                <div class="space-y-1">
-                    <span class="text-xs text-gray-400">Response</span>
-                    <div id="chatResponse" class="bg-geminiDark border border-geminiBorder rounded-xl p-3 text-sm text-gray-300 min-h-[60px] flex items-center">
-                        AI response will appear here...
-                    </div>
-                </div>
-            </div>
+    <div class="w-full max-w-lg bg-slate-800 rounded-2xl shadow-2xl border gold-border p-6 space-y-6">
+        <!-- Header -->
+        <div class="flex items-center justify-between border-b border-slate-700 pb-4">
+            <h1 class="text-2xl font-bold gold-text flex items-center gap-2">
+                <i class="fa-solid fa-bolt"></i> Flaxxi AI
+            </h1>
+            <span class="text-xs bg-emerald-500/10 text-emerald-400 px-2.5 py-1 rounded-full border border-emerald-500/20">Online</span>
         </div>
 
-        <!-- SECTION 2: Admin Panel View (Initially Hidden) -->
-        <div id="adminSection" class="absolute inset-0 flex flex-col p-4 sm:p-8 overflow-y-auto hidden">
-            <!-- Header & Add Button -->
-            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
-                <div>
-                    <h1 class="text-xl sm:text-2xl font-semibold text-white">Categories Management</h1>
-                    <p class="text-gray-400 text-xs sm:text-sm mt-0.5">Manage and organize all learning types and resources.</p>
-                </div>
-                <button onclick="addCategory()" class="bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded-xl text-sm font-medium flex items-center justify-center gap-2 shadow transition self-start sm:self-auto">
-                    <i class="fa-solid fa-plus"></i> Add New Category
+        <!-- Chat Area -->
+        <div class="space-y-4">
+            <div>
+                <label class="block text-sm font-medium text-slate-400 mb-1">Apna Sawal Likhie</label>
+                <textarea id="userInput" rows="3" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-white focus:outline-none focus:border-amber-500 transition" placeholder="Type message..."></textarea>
+            </div>
+
+            <div class="flex gap-2">
+                <button onclick="sendInstantMessage()" class="flex-1 gold-btn text-white font-semibold py-3 rounded-xl shadow-lg transition flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-paper-plane"></i> Ask Flaxxi
+                </button>
+                <button onclick="clearText()" class="bg-slate-700 hover:bg-slate-600 text-slate-300 font-semibold px-4 py-3 rounded-xl transition">
+                    Clear
                 </button>
             </div>
-
-            <!-- Filter Pills -->
-            <div class="flex items-center gap-2 overflow-x-auto pb-3 mb-4 scrollbar-none">
-                <button onclick="filterCat('All', this)" class="cat-btn px-4 py-1.5 rounded-full text-xs sm:text-sm font-medium bg-blue-600 text-white shrink-0 transition">All</button>
-                <button onclick="filterCat('Mathematics', this)" class="cat-btn px-4 py-1.5 rounded-full text-xs sm:text-sm font-medium bg-geminiSurface hover:bg-geminiHover text-gray-300 shrink-0 transition">Mathematics</button>
-                <button onclick="filterCat('Ethical Hacking', this)" class="cat-btn px-4 py-1.5 rounded-full text-xs sm:text-sm font-medium bg-geminiSurface hover:bg-geminiHover text-gray-300 shrink-0 transition">Ethical Hacking</button>
-                <button onclick="filterCat('App Development', this)" class="cat-btn px-4 py-1.5 rounded-full text-xs sm:text-sm font-medium bg-geminiSurface hover:bg-geminiHover text-gray-300 shrink-0 transition">App Development</button>
-                <button onclick="filterCat('Web Development', this)" class="cat-btn px-4 py-1.5 rounded-full text-xs sm:text-sm font-medium bg-geminiSurface hover:bg-geminiHover text-gray-300 shrink-0 transition">Web Development</button>
-            </div>
-
-            <!-- Categories Table Box -->
-            <div class="bg-geminiSurface border border-geminiBorder rounded-2xl overflow-hidden shadow-xl flex-1 flex flex-col">
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left border-collapse min-w-[500px]">
-                        <thead>
-                            <tr class="border-b border-geminiBorder text-gray-400 text-[11px] uppercase tracking-wider bg-geminiHover/50">
-                                <th class="p-3.5 font-medium">Category Name</th>
-                                <th class="p-3.5 font-medium">Resources Count</th>
-                                <th class="p-3.5 font-medium">Created Date</th>
-                                <th class="p-3.5 font-medium text-right">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody id="catTableBody" class="divide-y divide-geminiBorder text-sm">
-                            <tr class="hover:bg-geminiHover/40 transition" data-category="Mathematics">
-                                <td class="p-3.5 font-medium text-white flex items-center gap-2.5">
-                                    <div class="w-7 h-7 rounded-lg bg-purple-500/20 text-purple-400 flex items-center justify-center text-xs"><i class="fa-solid fa-square-root-variable"></i></div>
-                                    Mathematics
-                                </td>
-                                <td class="p-3.5 text-gray-400 text-xs">7 Resources</td>
-                                <td class="p-3.5 text-gray-400 text-xs">2024-09-18</td>
-                                <td class="p-3.5 text-right space-x-1">
-                                    <button onclick="editCat(this)" class="p-1.5 text-gray-400 hover:text-blue-400"><i class="fa-solid fa-pen text-xs"></i></button>
-                                    <button onclick="delCat(this)" class="p-1.5 text-gray-400 hover:text-red-400"><i class="fa-solid fa-trash text-xs"></i></button>
-                                </td>
-                            </tr>
-                            <tr class="hover:bg-geminiHover/40 transition" data-category="Ethical Hacking">
-                                <td class="p-3.5 font-medium text-white flex items-center gap-2.5">
-                                    <div class="w-7 h-7 rounded-lg bg-red-500/20 text-red-400 flex items-center justify-center text-xs"><i class="fa-solid fa-user-secret"></i></div>
-                                    Ethical Hacking
-                                </td>
-                                <td class="p-3.5 text-gray-400 text-xs">1 Resource</td>
-                                <td class="p-3.5 text-gray-400 text-xs">2023-09-18</td>
-                                <td class="p-3.5 text-right space-x-1">
-                                    <button onclick="editCat(this)" class="p-1.5 text-gray-400 hover:text-blue-400"><i class="fa-solid fa-pen text-xs"></i></button>
-                                    <button onclick="delCat(this)" class="p-1.5 text-gray-400 hover:text-red-400"><i class="fa-solid fa-trash text-xs"></i></button>
-                                </td>
-                            </tr>
-                            <tr class="hover:bg-geminiHover/40 transition" data-category="App Development">
-                                <td class="p-3.5 font-medium text-white flex items-center gap-2.5">
-                                    <div class="w-7 h-7 rounded-lg bg-green-500/20 text-green-400 flex items-center justify-center text-xs"><i class="fa-solid fa-mobile-screen"></i></div>
-                                    App Development
-                                </td>
-                                <td class="p-3.5 text-gray-400 text-xs">2 Resources</td>
-                                <td class="p-3.5 text-gray-400 text-xs">2023-09-21</td>
-                                <td class="p-3.5 text-right space-x-1">
-                                    <button onclick="editCat(this)" class="p-1.5 text-gray-400 hover:text-blue-400"><i class="fa-solid fa-pen text-xs"></i></button>
-                                    <button onclick="delCat(this)" class="p-1.5 text-gray-400 hover:text-red-400"><i class="fa-solid fa-trash text-xs"></i></button>
-                                </td>
-                            </tr>
-                            <tr class="hover:bg-geminiHover/40 transition" data-category="Web Development">
-                                <td class="p-3.5 font-medium text-white flex items-center gap-2.5">
-                                    <div class="w-7 h-7 rounded-lg bg-blue-500/20 text-blue-400 flex items-center justify-center text-xs"><i class="fa-solid fa-globe"></i></div>
-                                    Web Development
-                                </td>
-                                <td class="p-3.5 text-gray-400 text-xs">3 Resources</td>
-                                <td class="p-3.5 text-gray-400 text-xs">2023-09-17</td>
-                                <td class="p-3.5 text-right space-x-1">
-                                    <button onclick="editCat(this)" class="p-1.5 text-gray-400 hover:text-blue-400"><i class="fa-solid fa-pen text-xs"></i></button>
-                                    <button onclick="delCat(this)" class="p-1.5 text-gray-400 hover:text-red-400"><i class="fa-solid fa-trash text-xs"></i></button>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
         </div>
 
-    </main>
+        <!-- Output Area -->
+        <div class="space-y-2">
+            <label class="block text-sm font-medium text-slate-400">Response</label>
+            <div id="outputBox" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-4 min-h-[100px] text-slate-200 whitespace-pre-line text-sm">
+                Waiting for input...
+            </div>
+        </div>
+    </div>
 
-    <!-- JavaScript Functions -->
     <script>
-        function switchTab(tab) {
-            const chatSec = document.getElementById('chatSection');
-            const adminSec = document.getElementById('adminSection');
-            const chatBtn = document.getElementById('chatTabBtn');
-            const adminBtn = document.getElementById('adminTabBtn');
+        function sendInstantMessage() {
+            const input = document.getElementById('userInput').value.trim();
+            const outputBox = document.getElementById('outputBox');
 
-            if(tab === 'chat') {
-                chatSec.classList.remove('hidden');
-                adminSec.classList.add('hidden');
-                chatBtn.className = "px-3 sm:px-5 py-1.5 rounded-lg text-xs sm:text-sm font-medium transition bg-blue-600 text-white shadow";
-                adminBtn.className = "px-3 sm:px-5 py-1.5 rounded-lg text-xs sm:text-sm font-medium transition text-gray-400 hover:text-white";
-            } else {
-                chatSec.classList.add('hidden');
-                adminSec.classList.remove('hidden');
-                adminBtn.className = "px-3 sm:px-5 py-1.5 rounded-lg text-xs sm:text-sm font-medium transition bg-blue-600 text-white shadow";
-                chatBtn.className = "px-3 sm:px-5 py-1.5 rounded-lg text-xs sm:text-sm font-medium transition text-gray-400 hover:text-white";
-            }
-        }
-
-        function askFlaxxi() {
-            let q = document.getElementById('userQuery').value.trim();
-            let resp = document.getElementById('chatResponse');
-            if(!q) {
-                resp.innerText = "Pehle kuch type karein!";
+            if (!input) {
+                outputBox.innerText = "Kripya koi question type karein.";
                 return;
-    }
-            resp.innerText = "Flaxxi AI processing: '" + q + "'...";
-        }
-
-        function filterCat(cat, btn) {
-            document.querySelectorAll('.cat-btn').forEach(b => {
-                b.classList.remove('bg-blue-600', 'text-white');
-                b.classList.add('bg-geminiSurface', 'text-gray-300');
-            });
-            btn.classList.remove('bg-geminiSurface', 'text-gray-300');
-            btn.classList.add('bg-blue-600', 'text-white');
-
-            document.querySelectorAll('#catTableBody tr').forEach(row => {
-                let rCat = row.getAttribute('data-category');
-                if(cat === 'All' || rCat === cat) {
-                    row.style.display = '';
-                } else {
-                    row.style.display = 'none';
-                }
-            });
-        }
-
-        function addCategory() {
-            let name = prompt("Enter category name:");
-            if(name) alert("Category '" + name + "' added successfully!");
-        }
-
-        function editCat(btn) {
-            let row = btn.closest('tr');
-            let cur = row.cells[0].innerText.trim();
-            let n = prompt("Edit category name:", cur);
-            if(n) {
-                row.cells[0].childNodes[2].nodeValue = " " + n;
-                row.setAttribute('data-category', n);
             }
+
+            // Zero delay super-fast response logic
+            let reply = "Flaxxi AI Response: ";
+            const text = input.toLowerCase();
+
+            if (text.includes("hello") || text.includes("hi")) {
+                reply += "Namaste! Main Flaxxi AI hoon. Main aapki kya madad kar sakta hoon?";
+            } else if (text.includes("name") || text.includes("naam")) {
+                reply += "Mera naam Flaxxi AI hai!";
+            } else {
+                reply += `Aapka sawal tha: "${input}". Main fast response system par kaam kar raha hoon!`;
+            }
+
+            // Direct DOM update (Instant)
+            outputBox.innerText = reply;
         }
 
-        function delCat(btn) {
-            if(confirm("Delete this category?")) btn.closest('tr').remove();
+        function clearText() {
+            document.getElementById('userInput').value = '';
+            document.getElementById('outputBox').innerText = 'Waiting for input...';
         }
     </script>
 </body>
