@@ -34,7 +34,7 @@
         <div class="space-y-4">
             <div>
                 <label class="block text-sm font-medium text-slate-400 mb-1">Apna Sawal Likhie</label>
-                <textarea id="userInput" rows="3" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-white focus:outline-none focus:border-amber-500 transition" placeholder="Aaisa app bana he full guide do..."></textarea>
+                <textarea id="userInput" rows="3" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-white focus:outline-none focus:border-amber-500 transition" placeholder="Mujhe carrom pool aim hack bana he full guide do c++ code..."></textarea>
             </div>
 
             <!-- Image Preview Area -->
@@ -45,63 +45,59 @@
             </div>
 
             <div class="flex flex-wrap gap-2 items-center">
-                <!-- Ask Button -->
                 <button onclick="processAIResponse()" class="flex-1 gold-btn text-white font-semibold py-3 px-4 rounded-xl shadow-lg transition flex items-center justify-center gap-2">
                     <i class="fa-solid fa-paper-plane"></i> Ask Flaxxi
                 </button>
 
-                <!-- Photo Upload Button -->
-                <label class="bg-slate-800 hover:bg-slate-700 text-amber-400 border border-slate-700 font-semibold px-4 py-3 rounded-xl transition cursor-pointer flex items-center justify-center gap-2" title="Upload Photo">
+                <label class="bg-slate-800 hover:bg-slate-700 text-amber-400 border border-slate-700 font-semibold px-4 py-3 rounded-xl transition cursor-pointer flex items-center justify-center gap-2">
                     <i class="fa-solid fa-image"></i> Add Photo
                     <input type="file" id="imageInput" accept="image/*" class="hidden" onchange="handleImageUpload(event)">
                 </label>
 
-                <!-- Voice Input Button -->
                 <button onclick="startVoiceInput()" class="bg-indigo-600 hover:bg-indigo-500 text-white font-semibold px-4 py-3 rounded-xl transition flex items-center justify-center">
                     <i class="fa-solid fa-microphone" id="micIcon"></i>
                 </button>
 
-                <!-- Clear Button -->
                 <button onclick="clearText()" class="bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold px-4 py-3 rounded-xl transition">
                     Clear
                 </button>
             </div>
         </div>
 
-        <!-- Output & Voice Control Section -->
+        <!-- Output & Controls -->
         <div class="space-y-3">
-            <div class="flex flex-wrap items-center justify-between gap-2">
+            <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
                 <label class="block text-sm font-medium text-amber-400 flex items-center gap-2">
                     <i class="fa-solid fa-message"></i> Response
                 </label>
                 
-                <div class="flex items-center gap-2">
+                <div class="flex flex-wrap items-center gap-1.5 w-full sm:w-auto">
                     <!-- Language Selector -->
-                    <select id="langSelect" onchange="loadVoices()" class="bg-slate-950 text-slate-300 text-xs border border-slate-800 rounded-lg px-2 py-1.5 focus:outline-none">
+                    <select id="langSelect" onchange="loadVoices()" class="bg-slate-950 text-slate-300 text-xs border border-slate-800 rounded-lg px-2 py-1.5 focus:outline-none max-w-[100px]">
+                        <option value="hi-IN">Hindi</option>
+                        <option value="en-US">English</option>
                         <option value="ne-NP">Nepali</option>
-                        <option value="hi-IN">Hindi (India)</option>
-                        <option value="en-US">English (US)</option>
                         <option value="es-ES">Spanish</option>
                     </select>
 
                     <!-- Multiple Voice Select Dropdown -->
-                    <select id="voiceSelect" class="bg-slate-950 text-slate-300 text-xs border border-slate-800 rounded-lg px-2 py-1.5 focus:outline-none max-w-[120px] truncate">
+                    <select id="voiceSelect" class="bg-slate-950 text-slate-300 text-xs border border-slate-800 rounded-lg px-2 py-1.5 focus:outline-none max-w-[95px] truncate">
                         <option value="">Default Voice</option>
                     </select>
 
                     <!-- Play / Stop Button -->
-                    <button id="playBtn" onclick="toggleAudio()" class="text-xs bg-amber-500/10 text-amber-400 px-3 py-1.5 rounded-lg border border-amber-500/20 flex items-center gap-1 font-semibold">
+                    <button id="playBtn" onclick="toggleAudio()" class="text-xs bg-amber-500/10 text-amber-400 px-2.5 py-1.5 rounded-lg border border-amber-500/20 flex items-center gap-1 font-semibold">
                         <i id="playIcon" class="fa-solid fa-play"></i> <span id="playText">Play</span>
                     </button>
 
                     <!-- Copy Button -->
-                    <button onclick="copyCode()" class="text-xs bg-slate-800 hover:bg-slate-700 text-slate-300 px-3 py-1.5 rounded-lg border border-slate-700 flex items-center gap-1">
+                    <button onclick="copyCode()" class="text-xs bg-slate-800 hover:bg-slate-700 text-slate-300 px-2.5 py-1.5 rounded-lg border border-slate-700 flex items-center gap-1">
                         <i class="fa-solid fa-copy"></i> Copy
                     </button>
                 </div>
             </div>
             
-            <textarea id="outputBox" readonly class="w-full h-56 bg-slate-950 border border-slate-800 rounded-xl p-4 text-slate-200 font-mono text-xs leading-relaxed focus:outline-none resize-y" placeholder="Flaxxi AI ka javab yahan dikhega..."></textarea>
+            <textarea id="outputBox" readonly class="w-full h-64 bg-slate-950 border border-slate-800 rounded-xl p-4 text-slate-200 font-mono text-xs leading-relaxed focus:outline-none resize-y" placeholder="Flaxxi AI ka javab yahan dikhega..."></textarea>
         </div>
     </div>
 
@@ -124,7 +120,7 @@
                 const index = availableVoices.indexOf(voice);
                 const option = document.createElement('option');
                 option.value = index;
-                option.innerText = `${voice.name} (${voice.lang})`;
+                option.innerText = `${voice.name}`;
                 voiceSelect.appendChild(option);
             });
         }
@@ -161,66 +157,96 @@
             const currentLang = document.getElementById('langSelect').value;
 
             if (!input && !uploadedImageBase64) {
-                if(currentLang.startsWith('ne')) {
-                    outputBox.value = "कृपया कुनै सन्देश लेख्नुहोस् वा तस्विर थप्नुहोस्।";
-                } else {
-                    outputBox.value = "Kripya koi message likhein ya photo add karein.";
-                }
+                outputBox.value = "Kripya koi question likhein ya photo upload karein.";
                 return;
             }
 
             const query = input.toLowerCase();
             let responseText = "";
 
-            const hasImage = uploadedImageBase64 !== "";
-            const wantsAppOrCode = query.includes("aaisa app") || query.includes("app bana") || query.includes("code") || query.includes("carrom") || query.includes("aim") || query.includes("hack") || query.includes("guide");
-
-            if (hasImage || wantsAppOrCode) {
+            // Check if user asked for C++ with Guide
+            if ((query.includes("c++") || query.includes("cpp")) && (query.includes("guide") || query.includes("hack") || query.includes("aim"))) {
                 responseText = 
-`<!-- FLAXXI AI: CARROM AIM PRO FULL APP CODE -->
+`=== CARROM POOL AIM ASSIST: FULL GUIDE & C++ CODE ===
+
+[STEP 1: SYSTEM REQUIREMENTS]
+1. Install C++ Compiler (GCC / Clang / Visual Studio).
+2. Install OpenCV Library (Visual Tracking aur Screen Overlay ke liye).
+
+[STEP 2: OVERLAY & AIM ALGORITHM LOGIC]
+- Screen se Game Board Coordinates calculate hotey hain.
+- Striker position aur Pocket Position ke beech Trajectory Line draw hoti hai.
+
+[STEP 3: COMPLETE C++ SOURCE CODE]
+
+#include <iostream>
+#include <cmath>
+
+struct Vector2D {
+    float x, y;
+};
+
+// Calculate Aim Line Prediction Point
+Vector2D calculateAimPoint(Vector2D striker, Vector2D puck, Vector2D pocket) {
+    float angle = atan2(pocket.y - puck.y, pocket.x - puck.x);
+    Vector2D targetPos;
+    float puckRadius = 15.0f; // Radius setup
+    
+    targetPos.x = puck.x - cos(angle) * (puckRadius * 2);
+    targetPos.y = puck.y - sin(angle) * (puckRadius * 2);
+    
+    return targetPos;
+}
+
+int main() {
+    std::cout << "--- FLAXXI AI CARROM AIM BOT LAUNCHED ---" << std::endl;
+    
+    Vector2D striker = { 150.0f, 50.0f };
+    Vector2D puck = { 150.0f, 200.0f };
+    Vector2D pocket = { 300.0f, 300.0f };
+
+    Vector2D aimTarget = calculateAimPoint(striker, puck, pocket);
+
+    std::cout << "[Aim Bot Output] Calculated Aim Line Target:" << std::endl;
+    std::cout << "X Coordinates: " << aimTarget.x << ", Y Coordinates: " << aimTarget.y << std::endl;
+
+    return 0;
+}
+
+[STEP 4: HOW TO RUN]
+1. Code ko 'aimbot.cpp' naam se save karein.
+2. Terminal me execute karein: g++ aimbot.cpp -o aimbot && ./aimbot`;
+            } 
+            else if (uploadedImageBase64 || query.includes("html") || query.includes("app bana")) {
+                responseText = 
+`=== CARROM AIM APP: GUIDE & CODE ===
+
+[STEP 1: Web Browser App setup]
+[STEP 2: HTML Overlay Screen]
+
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Carrom Aim Line Pro App</title>
     <style>
-        body { background: #050b14; color: white; text-align: center; font-family: sans-serif; padding: 20px; }
-        .board { width: 300px; height: 300px; background: #15803d; border: 8px solid #78350f; border-radius: 50%; margin: 20px auto; position: relative; box-shadow: 0 0 20px rgba(0,0,0,0.8); }
-        .striker { width: 34px; height: 34px; background: #fff; border-radius: 50%; position: absolute; bottom: 25px; left: 133px; border: 2px solid #333; }
-        .aim-line { position: absolute; bottom: 58px; left: 149px; width: 3px; height: 170px; background: #facc15; transform-origin: bottom center; box-shadow: 0 0 8px #facc15; }
-        .btn { background: #d97706; color: white; border: none; padding: 12px 24px; border-radius: 8px; font-weight: bold; cursor: pointer; margin-top: 10px; }
+        body { background: #0b0f19; color: white; text-align: center; font-family: sans-serif; }
+        .board { width: 280px; height: 280px; background: #15803d; border: 6px solid #78350f; border-radius: 50%; margin: 20px auto; position: relative; }
+        .striker { width: 30px; height: 30px; background: white; border-radius: 50%; position: absolute; bottom: 20px; left: 125px; }
+        .aim-line { position: absolute; bottom: 50px; left: 139px; width: 3px; height: 160px; background: #facc15; }
     </style>
 </head>
 <body>
-    <h2>Carrom Pro Aim Guide App</h2>
-    <div class="board">
-        <div class="aim-line" id="aimLine"></div>
-        <div class="striker"></div>
-    </div>
-    <button class="btn" onclick="rotateAim()">Rotate Aim Guide Line</button>
-
-    <script>
-        let angle = 0;
-        function rotateAim() {
-            angle = (angle + 15) % 60 - 30;
-            document.getElementById('aimLine').style.transform = \`rotate(\${angle}deg)\`;
-        }
-    <\/script>
+    <h3>Carrom Aim Tool</h3>
+    <div class="board"><div class="aim-line"></div><div class="striker"></div></div>
 </body>
 </html>`;
-            } else if (query.includes("hlo") || query.includes("hello") || query.includes("hi")) {
-                if (currentLang.startsWith('ne')) {
-                    responseText = "नमस्ते! म फ्ल्याक्सी एआई हुँ। आज म तपाईलाई कसरी सहयोग गर्न सक्छु?";
-                } else {
-                    responseText = "Hello! Main Flaxxi AI hoon. Main aapki kya madad kar sakta hoon?";
-                }
-            } else {
-                if (currentLang.startsWith('ne')) {
-                    responseText = `फ्ल्याक्सी एआई प्रतिक्रिया:\nतपाईको प्रश्न: "${input}"। म यस विषयमा तपाईलाई सहयोग गर्न सक्छु।`;
-                } else {
-                    responseText = `Flaxxi AI Response:\nAapka question: "${input}". Main is baare mein aapki help kar sakta hoon.`;
-                }
+            } 
+            else if (query.includes("hlo") || query.includes("hello") || query.includes("hi")) {
+                responseText = currentLang.startsWith('ne') ? 
+                    "नमस्ते! म फ्ल्याक्सी एआई हुँ। आज म तपाईलाई कसरी सहयोग गर्न सक्छु?" : 
+                    "Hello! Main Flaxxi AI hoon. Main aapki kya madad kar sakta hoon?";
+            } 
+            else {
+                responseText = `Flaxxi AI Response:\nAapka question: "${input}". Main is baare mein aapki Help kar sakta hoon.`;
             }
 
             outputBox.value = responseText;
