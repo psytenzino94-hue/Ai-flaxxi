@@ -34,7 +34,7 @@
         <div class="space-y-4">
             <div>
                 <label class="block text-sm font-medium text-slate-400 mb-1">Apna Sawal Likhie</label>
-                <textarea id="userInput" rows="3" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-white focus:outline-none focus:border-amber-500 transition" placeholder="Apna sawal yahan likhein..."></textarea>
+                <textarea id="userInput" rows="3" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-white focus:outline-none focus:border-amber-500 transition" placeholder="Kuch bhi poochie... (e.g. Youtube kisne banaya?)"></textarea>
             </div>
 
             <!-- Image Preview Area -->
@@ -146,7 +146,7 @@
             document.getElementById('imagePreviewContainer').classList.add('hidden');
         }
 
-        function processAIResponse() {
+        async function processAIResponse() {
             stopAudio();
             const input = document.getElementById('userInput').value.trim();
             const outputBox = document.getElementById('outputBox');
@@ -157,23 +157,20 @@
                 return;
             }
 
-            const query = input.toLowerCase();
-            let responseText = "";
+            outputBox.value = "Flaxxi AI soch raha hai...";
 
-            if (query.includes("hlo") || query.includes("hello") || query.includes("hi")) {
-                responseText = currentLang.startsWith('ne') ? 
-                    "नमस्ते! म फ्ल्याक्सी एआई हुँ। आज म तपाईलाई कसरी सहयोग गर्न सक्छु?" : 
-                    "Hello! Main Flaxxi AI hoon. Main aapki kya madad kar sakta hoon?";
-            } 
-            else if (query.includes("carrom") || query.includes("aim") || query.includes("hack") || query.includes("guide") || query.includes("opencv") || query.includes("python") || query.includes("c++") || query.includes("math")) {
-                responseText = 
+            const query = input.toLowerCase();
+
+            // 1. Specific Aim-Bot Code Query Match
+            if (query.includes("carrom") || query.includes("aim") || query.includes("hack") || query.includes("opencv")) {
+                outputBox.value = 
 `=============================================================
  FLAXXI AI: CARROM AIM BOT PROJECT MATH & OPENCV CODE 
 =============================================================
 
 [1. PROJECT MATHEMATICAL FOUNDATION]
 • 2D Vector Geometry: Striker (S), Coin (C), Pocket (P)
-• Contact Point Angle: theta = atan2(P.y - C.y, P.x - C.x)
+• Contact Angle: theta = atan2(P.y - C.y, P.x - C.x)
 • Target Formula:
   Target.x = C.x - cos(theta) * (R_striker + R_coin)
   Target.y = C.y - sin(theta) * (R_striker + R_coin)
@@ -215,12 +212,31 @@ int main() {
     std::cout << "[C++ Engine] Target X: " << target.x << " Y: " << target.y << std::endl;
     return 0;
 }`;
-            } 
-            else {
-                responseText = `Flaxxi AI Response:\nAapka question: "${input}". Main is baare mein aapki Help kar sakta hoon.`;
+                return;
             }
 
-            outputBox.value = responseText;
+            // 2. Fetch Answer dynamically using Free Public AI Endpoint
+            try {
+                const response = await fetch(`https://text.pollinations.ai/${encodeURIComponent(input)}?system=You are Flaxxi AI, a helpful smart assistant. Respond clearly and accurately to the user's question in Hindi/Hinglish or the language they requested.`);
+                const data = await response.text();
+                
+                if(data && data.length > 0) {
+                    outputBox.value = data;
+                } else {
+                    throw new Error("Empty response");
+                }
+            } catch (err) {
+                // Fallback offline answers if network is slow/offline
+                if (query.includes("youtube")) {
+                    outputBox.value = "YouTube ko 14 February 2005 ko 3 logon ne milkar banaya tha:\n1. Steve Chen\n2. Chad Hurley\n3. Jawed Karim\n\nYe teeno pehle PayPal me kaam karte the. Baad me November 2006 me Google ne YouTube ko $1.65 Billion me khareed liya tha.";
+                } else if (query.includes("hlo") || query.includes("hello") || query.includes("hi")) {
+                    outputBox.value = currentLang.startsWith('ne') ? 
+                        "नमस्ते! म फ्ल्याक्सी एआई हुँ। आज म तपाईलाई कसरी सहयोग गर्न सक्छु?" : 
+                        "Hello! Main Flaxxi AI hoon. Main aapki kya madad kar sakta hoon?";
+                } else {
+                    outputBox.value = `Flaxxi AI Response:\n\nAapka question: "${input}"\n\nKripya apna internet connection check karein ya thodi der me try karein.`;
+                }
+            }
         }
 
         function toggleAudio() {
